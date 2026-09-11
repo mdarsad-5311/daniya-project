@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us — Daania{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+  <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Contact</p>
+  <h1 class="font-display text-4xl sm:text-5xl">We'd love to hear from you</h1>
+  <p class="mt-2 max-w-xl text-sm text-muted-foreground">
+    Questions about a formula, an order or a bulk request &mdash; our small team answers every message.
+  </p>
+
+  <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+    
+    <!-- Contact Form -->
+    <div x-data="{ toast: false }" class="relative">
+      <form class="space-y-5 rounded-3xl border border-border/70 bg-card p-8 shadow-sm" @submit.prevent="toast = true; setTimeout(() => toast = false, 3000); $el.reset()">
+        
+        <!-- Toast Notification -->
+        <div x-show="toast" x-transition style="display: none;" class="absolute -top-16 left-0 right-0 flex justify-center z-50">
+          <div class="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-lg flex items-center gap-2">
+            <i data-lucide="check-circle" class="h-4 w-4"></i> Message sent! (Demo)
+          </div>
+        </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label for="name" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Name</label>
+          <input id="name" required placeholder="Your name" class="flex h-10 w-full rounded-2xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+        </div>
+        <div class="space-y-2">
+          <label for="email" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+          <input id="email" type="email" required placeholder="you@email.com" class="flex h-10 w-full rounded-2xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label for="subject" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Subject</label>
+        <input id="subject" required placeholder="How can we help?" class="flex h-10 w-full rounded-2xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+      </div>
+      <div class="space-y-2">
+        <label for="message" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
+        <textarea id="message" required rows="6" placeholder="Tell us more…" class="flex min-h-[80px] w-full rounded-2xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"></textarea>
+      </div>
+      <button type="submit" class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
+        Send message
+      </button>
+      </form>
+    </div>
+
+    <!-- Details Aside -->
+    <aside class="h-fit space-y-5 rounded-3xl border border-border/70 bg-cream p-8 shadow-sm">
+      <div class="flex gap-3">
+        <i data-lucide="mail" class="mt-0.5 h-5 w-5 shrink-0 text-primary" stroke-width="1.6"></i>
+        <div>
+          <p class="text-sm font-semibold">Email</p>
+          <p class="text-sm text-muted-foreground">hello@daania.com</p>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <i data-lucide="phone" class="mt-0.5 h-5 w-5 shrink-0 text-primary" stroke-width="1.6"></i>
+        <div>
+          <p class="text-sm font-semibold">Phone</p>
+          <p class="text-sm text-muted-foreground">+1 (555) 018-2244</p>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <i data-lucide="map-pin" class="mt-0.5 h-5 w-5 shrink-0 text-primary" stroke-width="1.6"></i>
+        <div>
+          <p class="text-sm font-semibold">Studio</p>
+          <p class="text-sm text-muted-foreground">42 Linden Lane, Portland, OR</p>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <i data-lucide="clock" class="mt-0.5 h-5 w-5 shrink-0 text-primary" stroke-width="1.6"></i>
+        <div>
+          <p class="text-sm font-semibold">Hours</p>
+          <p class="text-sm text-muted-foreground">Mon–Fri, 9am – 5pm PT</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FAQs Section with Alpine.js Accordion -->
+  <section class="mt-16 max-w-3xl" x-data="{ active: null }">
+    <h2 class="font-display text-3xl">Frequently asked</h2>
+    
+    <div class="mt-4 border-b border-border">
+      
+      <!-- FAQ 1 -->
+      <div class="border-t border-border">
+        <button type="button" @click="active = (active === 1 ? null : 1)" class="flex w-full items-center justify-between py-4 text-left text-sm font-semibold transition-all hover:underline">
+          How long does shipping take?
+          <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': active === 1 }"></i>
+        </button>
+        <div x-show="active === 1" x-collapse style="display: none;">
+          <div class="pb-4 text-sm text-muted-foreground">
+            Orders ship in 1–2 business days and arrive within 3–6 days.
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="border-t border-border">
+        <button type="button" @click="active = (active === 2 ? null : 2)" class="flex w-full items-center justify-between py-4 text-left text-sm font-semibold transition-all hover:underline">
+          Are your products vegan?
+          <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': active === 2 }"></i>
+        </button>
+        <div x-show="active === 2" x-collapse style="display: none;">
+          <div class="pb-4 text-sm text-muted-foreground">
+            Every cream is vegan. Our honey and goat milk soaps contain animal-derived ingredients.
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="border-t border-border">
+        <button type="button" @click="active = (active === 3 ? null : 3)" class="flex w-full items-center justify-between py-4 text-left text-sm font-semibold transition-all hover:underline">
+          Can I return an opened product?
+          <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': active === 3 }"></i>
+        </button>
+        <div x-show="active === 3" x-collapse style="display: none;">
+          <div class="pb-4 text-sm text-muted-foreground">
+            Yes &mdash; if your skin doesn't agree with it, return within 30 days for a full refund.
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="border-t border-border">
+        <button type="button" @click="active = (active === 4 ? null : 4)" class="flex w-full items-center justify-between py-4 text-left text-sm font-semibold transition-all hover:underline">
+          Do you offer refills?
+          <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': active === 4 }"></i>
+        </button>
+        <div x-show="active === 4" x-collapse style="display: none;">
+          <div class="pb-4 text-sm text-muted-foreground">
+            Refill pouches for all creams are coming to the shop this season.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+{% endblock %}

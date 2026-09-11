@@ -1,0 +1,370 @@
+/*
+ * Glow & Pure design system — soft cream, ivory, beige and earthy green.
+ * All colors are oklch tokens; never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
+  --radius-4xl: calc(var(--radius) + 24px);
+
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-cream: var(--cream);
+  --color-ivory: var(--ivory);
+  --color-sand: var(--sand);
+  --color-clay: var(--clay);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-gold: var(--gold);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 1.5rem;
+
+  /* Glow & Pure — warm cream, ivory, beige and earthy green palette */
+  --background: #F9F0E3;
+  --foreground: #1A1A24;
+
+  --card: #FFFFFF;
+  --card-foreground: #1A1A24;
+  --popover: rgba(255, 255, 255, 0.8);
+  --popover-foreground: #1A1A24;
+
+  /* Brand primary — sage green */
+  --primary: #486551;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #EEF2EE;
+  --secondary-foreground: #374151;
+
+  --muted: #EEF2EE;
+  --muted-foreground: #6B7280;
+
+  /* Accent — soft warm green (replaces indigo blue) */
+  --accent: #D4E3D7;
+  --accent-foreground: #2D4A34;
+
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  --border: rgba(180, 200, 185, 0.5);
+  --input: rgba(180, 200, 185, 0.5);
+  --ring: #486551;
+
+  --cream: #FFFFFF;
+  --ivory: #FAFAFC;
+  --sand: #EEF2EE;
+  --clay: #C8D5CA;
+  --sage: #486551;
+  --sage-soft: #6A8F74;
+  --gold: #D4A853;
+
+  /* Shadows — green-tinted, no purple */
+  --shadow-soft: 0 4px 20px -2px rgba(72, 101, 81, 0.08);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04);
+  --shadow-lift: 0 20px 40px -10px rgba(72, 101, 81, 0.18);
+
+  --gradient-lovable: linear-gradient(135deg, #F9F0E3 0%, #F9F0E3 100%);
+  --gradient-primary: #486551;
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --sidebar: rgba(255, 255, 255, 0.8);
+  --sidebar-foreground: #1A1A24;
+  --sidebar-primary: #486551;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #D4E3D7;
+  --sidebar-accent-foreground: #2D4A34;
+  --sidebar-border: rgba(180, 200, 185, 0.5);
+  --sidebar-ring: #486551;
+}
+
+.dark {
+  --background: #0F172A;
+  --foreground: #F8FAFC;
+  
+  --card: rgba(30, 41, 59, 0.7);
+  --card-foreground: #F8FAFC;
+  --popover: rgba(30, 41, 59, 0.8);
+  --popover-foreground: #F8FAFC;
+  
+  --primary: #6A8F74;
+  --primary-foreground: #FFFFFF;
+  
+  --secondary: #1E293B;
+  --secondary-foreground: #F8FAFC;
+  
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  
+  --accent: #2D4A34;
+  --accent-foreground: #D4E3D7;
+  
+  --border: rgba(72, 101, 81, 0.3);
+  --input: rgba(72, 101, 81, 0.3);
+  --ring: #6A8F74;
+  
+  --cream: #0F172A;
+  --ivory: #1E293B;
+  --sand: #334155;
+  
+  --sidebar: rgba(30, 41, 59, 0.8);
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-primary: #6A8F74;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #2D4A34;
+  --sidebar-accent-foreground: #D4E3D7;
+  --sidebar-border: rgba(72, 101, 81, 0.3);
+  --sidebar-ring: #6A8F74;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+    background-color: #F9F0E3;
+    outline: none;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    outline: none;
+  }
+
+  /* Override browser blue text selection highlight */
+  ::selection {
+    background-color: rgba(72, 101, 81, 0.25);
+    color: #1A1A24;
+  }
+
+  ::-moz-selection {
+    background-color: rgba(72, 101, 81, 0.25);
+    color: #1A1A24;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility shadow-lift {
+  box-shadow: var(--shadow-lift);
+}
+
+@utility bg-gradient-lovable {
+  background-image: var(--gradient-lovable);
+}
+
+@utility bg-gradient-primary {
+  background-image: var(--gradient-primary);
+}
+
+@utility glass {
+  background-color: var(--color-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+}
+
+@utility glass-card {
+  background-color: var(--color-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-2xl);
+  transition: all 0.3s var(--ease-soft);
+}
+
+@utility glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+@utility btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+@utility btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.23);
+  transform: translateY(-2px);
+}
+
+@utility eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+}
+
+@utility transition-soft {
+  transition-property: transform, box-shadow, opacity, background-color, color, border-color;
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-soft);
+}
+
+@utility blob {
+  position: absolute;
+  border-radius: 50% 40% 60% 45% / 55% 50% 45% 60%;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(4deg);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.32);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@utility animate-float-slow {
+  animation: float-slow 12s var(--ease-soft) infinite;
+}
+
+@utility animate-rise-in {
+  animation: rise-in 0.7s var(--ease-soft) both;
+}
+
+@utility animate-pop {
+  animation: pop 0.4s var(--ease-soft);
+}
+
+/* ── Range Slider: force brand green accent cross-browser ── */
+input[type="range"] {
+  accent-color: #486551;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background-color: #486551;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background-color: #486551;
+  border-color: #486551;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #486551 var(--range-progress, 100%), #D1C4B0 var(--range-progress, 100%));
+}
+
+/* ── Select / Dropdown: replace browser blue with brand green ── */
+select {
+  accent-color: #486551;
+  outline-color: #486551;
+}
+
+select:focus {
+  outline: 2px solid #486551 !important;
+  outline-offset: 2px !important;
+  border-color: #486551 !important;
+  box-shadow: 0 0 0 3px rgba(72, 101, 81, 0.18) !important;
+}
+
+/* Chrome/Edge — highlight the selected option row */
+select option:checked,
+select option:focus {
+  background-color: #486551 !important;
+  color: #ffffff !important;
+}
+
+/* ── Checkboxes: replace browser blue with brand green ── */
+input[type="checkbox"] {
+  accent-color: #486551;
+}
+
+input[type="checkbox"]:focus {
+  outline: 2px solid #486551 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(72, 101, 81, 0.18) !important;
+}
+
+/* ── Global focus-visible: remove blue ring everywhere ── */
+*:focus-visible {
+  outline: 2px solid #486551 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(72, 101, 81, 0.15) !important;
+}

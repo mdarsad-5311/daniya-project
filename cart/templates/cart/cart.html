@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Bag — Daania{% endblock %}
+
+{% block content %}
+{% if not cart_items %}
+  <!-- Empty State -->
+  <div class="mx-auto flex max-w-2xl flex-col items-center gap-4 px-4 py-24 text-center">
+    <i data-lucide="shopping-bag" class="h-12 w-12 text-muted-foreground" stroke-width="1.2"></i>
+    <h1 class="font-display text-3xl">Your bag is empty</h1>
+    <p class="text-sm text-muted-foreground">Add a cream or a soap and it will show up here.</p>
+    <a href="{% url 'shop' %}" class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-4">
+      Start shopping
+    </a>
+  </div>
+{% else %}
+  <!-- Populated Cart -->
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <h1 class="font-display text-4xl sm:text-5xl">Your bag</h1>
+
+    <div class="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+      
+      <!-- Cart Items List -->
+      <div class="space-y-6">
+        {% for line in cart_items %}
+          <div class="grid grid-cols-[96px_minmax(0,1fr)] gap-4 rounded-3xl border border-border/70 bg-card p-4 shadow-sm">
+            <div class="h-24 w-24 rounded-2xl bg-stone-200 object-cover flex items-center justify-center">
+              {% if line.product.image %}
+                <img src="{{ line.product.image.url }}" alt="{{ line.product.name }}" loading="lazy" class="h-full w-full rounded-2xl object-cover" />
+              {% else %}
+                <span class="text-xs text-stone-400">Image</span>
+              {% endif %}
+            </div>
+            
+            <div class="min-w-0">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <a href="{% url 'product_detail' line.product.slug %}" class="truncate text-base font-semibold transition-soft hover:text-primary">
+                    {{ line.product.name }}
+                  </a>
+                  <p class="text-xs text-muted-foreground">{{ line.product.category.name }}</p>
+                </div>
+                
+                <!-- Remove item -->
+                <form action="{% url 'remove_from_cart' line.id %}" method="POST" class="inline">
+                  {% csrf_token %}
+                  <button type="submit" aria-label="Remove item" class="text-muted-foreground transition-soft hover:text-destructive">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                  </button>
+                </form>
+              </div>
+              
+              <div class="mt-4 flex items-center justify-between gap-3">
+                <div class="flex items-center rounded-full border border-border">
+                  <!-- Decrease quantity -->
+                  <form action="{% url 'update_cart' line.id %}" method="POST" class="inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="{{ line.quantity|add:'-1' }}">
+                    <button type="submit" aria-label="Decrease quantity" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:bg-muted">
+                      <i data-lucide="minus" class="h-3.5 w-3.5"></i>
+                    </button>
+                  </form>
+                  <span class="w-7 text-center text-sm">{{ line.quantity }}</span>
+                  <!-- Increase quantity -->
+                  <form action="{% url 'update_cart' line.id %}" method="POST" class="inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="{{ line.quantity|add:'1' }}">
+                    <button type="submit" aria-label="Increase quantity" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:bg-muted">
+                      <i data-lucide="plus" class="h-3.5 w-3.5"></i>
+                    </button>
+                  </form>
+                </div>
+                <span class="text-base font-semibold">
+                  ${{ line.total_price }}
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        <!-- Cart Actions -->
+        <div class="flex flex-wrap gap-3">
+          <a href="{% url 'shop' %}" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+            Continue shopping
+          </a>
+        </div>
+      </div>
+
+      <!-- Order Summary Aside -->
+      <aside class="h-fit space-y-4 rounded-3xl border border-border/70 bg-cream p-6 shadow-sm">
+        <h2 class="font-display text-2xl">Order summary</h2>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">Subtotal</span>
+          <span>${{ subtotal|default:"0.00" }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">You save</span>
+          <span class="text-primary">−${{ discount|default:"0.00" }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted-foreground">Shipping</span>
+          {% if subtotal|default:0 > 50 %}
+            <span>Free</span>
+          {% else %}
+            <span>$5.00</span>
+          {% endif %}
+        </div>
+        
+        <hr class="border-border">
+        
+        <div class="flex justify-between text-lg font-semibold">
+          <span>Total</span>
+          {% if subtotal|default:0 > 50 %}
+            <span>${{ total|default:"0.00" }}</span>
+          {% else %}
+            <span>${{ total|add:5|default:"5.00" }}</span>
+          {% endif %}
+        </div>
+        
+        <!-- Promo Code -->
+        <form class="flex gap-2 pt-2" x-data @submit.prevent="alert('Promo codes are disabled in this demo')">
+          <input type="text" placeholder="Promo code" class="flex h-10 w-full rounded-full border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+          <button type="submit" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+            Apply
+          </button>
+        </form>
+        
+        <!-- Checkout -->
+        <a href="{% url 'checkout' %}" class="inline-flex w-full h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
+          <i data-lucide="lock" class="mr-2 h-4 w-4"></i> Checkout
+        </a>
+        <p class="text-center text-xs text-muted-foreground">Demo storefront &mdash; no payment is taken.</p>
+      </aside>
+      
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

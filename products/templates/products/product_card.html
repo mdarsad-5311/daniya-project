@@ -1,0 +1,161 @@
+<!-- Product Card Component -->
+<article x-data="{ quickView: false }" class="group relative flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-soft transition-soft hover:-translate-y-1.5 hover:shadow-lift">
+  
+  <div class="relative overflow-hidden bg-cream">
+    <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}#{% endif %}" aria-label="{{ product.name }}">
+      <!-- Product Image (Fallback to placeholder if no image) -->
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="aspect-square w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+      {% else %}
+        <div class="aspect-square w-full bg-stone-200 flex items-center justify-center text-stone-400">Image</div>
+      {% endif %}
+    </a>
+
+    <!-- Discount Badge -->
+    {% if product.original_price and product.original_price > product.price %}
+      <span class="absolute left-4 top-4 rounded-full px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-widest text-white" style="background-color:#486551;">
+        {% widthratio product.price product.original_price 100 as pct %}{{ 100|add:"-pct" }}% OFF
+      </span>
+    {% endif %}
+
+    <!-- Wishlist Button -->
+    {% if product %}
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'add_to_wishlist' product.id %}" method="POST" class="absolute right-4 top-4">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      {% if product.id in wishlist_product_ids %}
+      <button type="submit" aria-label="Already in wishlist" title="In your wishlist" class="grid h-10 w-10 place-items-center rounded-full bg-background/90 text-red-500 backdrop-blur transition-soft hover:bg-background hover:scale-105 shadow-sm">
+        <i data-lucide="heart" class="h-4.5 w-4.5 fill-current text-red-500" stroke-width="1.6"></i>
+      </button>
+      {% else %}
+      <button type="submit" aria-label="Add to wishlist" title="Add to wishlist" class="grid h-10 w-10 place-items-center rounded-full bg-background/85 text-foreground backdrop-blur transition-soft hover:bg-background hover:text-red-500">
+        <i data-lucide="heart" class="h-4.5 w-4.5 transition-soft" stroke-width="1.6"></i>
+      </button>
+      {% endif %}
+    </form>
+    {% else %}
+    <a href="{% url 'login' %}?next={% if product.slug %}{% url 'product_detail' product.slug %}{% else %}/{% endif %}"
+       class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-background/85 text-foreground backdrop-blur transition-soft hover:bg-background hover:text-red-500"
+       aria-label="Sign in to add to wishlist">
+      <i data-lucide="heart" class="h-4.5 w-4.5 transition-soft" stroke-width="1.6"></i>
+    </a>
+    {% endif %}
+    {% endif %}
+
+
+    <!-- Quick View Button -->
+    <div class="pointer-events-none absolute inset-x-4 bottom-4 flex translate-y-3 justify-center opacity-0 transition-soft group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+      <button type="button" @click="quickView = true" class="inline-flex items-center justify-center rounded-full shadow-soft bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-8 text-sm font-medium">
+        <i data-lucide="eye" class="mr-2 h-4 w-4"></i> Quick View
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-2 p-5">
+    <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">{{ product.category.name }}</p>
+    <h3 class="text-lg font-semibold leading-snug">
+      <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}#{% endif %}" class="transition-soft hover:text-primary">
+        {{ product.name }}
+      </a>
+    </h3>
+    
+    <div class="flex items-center gap-2 text-yellow-500">
+      {% include 'stars.html' with rating=5 size=14 %}
+      <span class="text-xs text-muted-foreground ml-1">5.0 (12)</span>
+    </div>
+    
+    <div class="mt-1 flex items-baseline gap-2">
+      <span class="text-lg font-semibold">${{ product.price }}</span>
+      {% if product.original_price %}
+        <span class="text-sm text-muted-foreground line-through">${{ product.original_price }}</span>
+      {% endif %}
+    </div>
+    
+    <!-- Add to Cart Form -->
+    {% if product %}
+    <form action="{% url 'add_to_cart' product.id %}" method="POST" class="mt-4 w-full">
+      {% csrf_token %}
+      <input type="hidden" name="quantity" value="1">
+      <button type="submit" class="inline-flex w-full h-10 items-center justify-center rounded-full text-white text-sm font-medium transition-all hover:opacity-90 hover:-translate-y-0.5" style="background-color:#486551;">
+        <i data-lucide="shopping-bag" class="mr-2 h-4 w-4"></i> Add to Cart
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Quick View Dialog (Alpine Modal) -->
+  <div x-show="quickView" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div x-show="quickView" x-transition.opacity class="fixed inset-0 bg-background/80 backdrop-blur-sm"></div>
+    <div class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div 
+          x-show="quickView" 
+          x-transition:enter="ease-out duration-300" 
+          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+          x-transition:leave="ease-in duration-200" 
+          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+          @click.away="quickView = false"
+          class="relative transform overflow-hidden rounded-3xl bg-background text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl"
+        >
+          <div class="absolute right-4 top-4">
+            <button type="button" @click="quickView = false" class="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground">
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+          <div class="grid gap-6 p-6 sm:grid-cols-2">
+            <!-- Modal Image -->
+            <div class="aspect-square w-full rounded-2xl bg-stone-200 object-cover flex items-center justify-center">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="h-full w-full rounded-2xl object-cover" />
+              {% else %}
+                <span class="text-stone-400">Image</span>
+              {% endif %}
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="flex min-w-0 flex-col gap-3 mt-4 sm:mt-0">
+              <div class="space-y-1 text-left">
+                <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">{{ product.category.name }}</p>
+                <h2 class="font-display text-2xl font-semibold">{{ product.name }}</h2>
+                <p class="text-sm text-muted-foreground">{{ product.description|truncatewords:15 }}</p>
+              </div>
+              <div class="flex items-center gap-2 text-yellow-500">
+                <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                <span class="text-xs text-muted-foreground ml-1">12 reviews</span>
+              </div>
+              <p class="text-2xl font-semibold">${{ product.price }}</p>
+              
+              <ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4 mt-2">
+                <li>100% natural ingredients</li>
+                <li>Dermatologist tested</li>
+                <li>Eco-friendly packaging</li>
+              </ul>
+              
+              <div class="mt-auto flex flex-wrap gap-2 pt-4">
+                {% if product %}
+                <form action="{% url 'add_to_cart' product.id %}" method="POST" class="flex-1">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="w-full inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                    Add to Cart
+                  </button>
+                </form>
+                {% endif %}
+                <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}#{% endif %}" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+                  View details
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

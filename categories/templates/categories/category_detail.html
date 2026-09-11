@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if slug == 'creams' %}Natural Face & Body Creams — Daania{% elif slug == 'soaps' %}Natural Hand-Cut Soaps — Daania{% else %}{{ category.name }} — Daania{% endif %}
+{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Dynamic Hero Section -->
+  <section class="bg-cream">
+    <div class="mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-2">
+      <div class="space-y-4">
+        
+        <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          {{ category.name|default:slug|title }}
+        </p>
+        
+        <!-- React UI Specific Fallbacks -->
+        {% if slug == 'creams' %}
+          <h1 class="font-display text-4xl sm:text-5xl">Moisture that lasts all day</h1>
+          <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
+            From weightless gel-creams to rich shea butters &mdash; pick the texture your skin is asking
+            for today.
+          </p>
+        {% elif slug == 'soaps' %}
+          <h1 class="font-display text-4xl sm:text-5xl">Hand-cut, slow-cured bars</h1>
+          <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
+            Cold-process soaps made in small batches with botanical oils, then cured four weeks for a
+            creamier, longer-lasting lather.
+          </p>
+        {% else %}
+          <!-- Generic DB Driven Title -->
+          <h1 class="font-display text-4xl sm:text-5xl">{{ category.name }}</h1>
+          <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
+            {{ category.description }}
+          </p>
+        {% endif %}
+
+      </div>
+      
+      <!-- Category Image -->
+      <div class="aspect-3/2 w-full rounded-[2rem] bg-stone-200 object-cover shadow-sm flex items-center justify-center text-stone-400">
+        {% if category.image %}
+          <img src="{{ category.image.url }}" alt="{{ category.name }}" class="h-full w-full rounded-[2rem] object-cover" />
+        {% else %}
+          <span>{{ category.name|default:slug|title }} Lifestyle Image (1200x800)</span>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% for product in products %}
+        {% include 'products/product_card.html' with product=product %}
+      {% empty %}
+        <!-- No products in this category yet -->
+        <div class="col-span-full py-16 text-center">
+          <p class="text-sm text-muted-foreground">No products found in this category yet.</p>
+          <a href="{% url 'shop' %}" class="mt-4 inline-flex h-10 items-center justify-center rounded-full px-8 text-sm font-medium text-white transition-all hover:opacity-90" style="background-color:#486551;">
+            View all products
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

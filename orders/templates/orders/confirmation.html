@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} Confirmed — Daania{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+
+  <!-- Success Icon + Message -->
+  <div class="flex flex-col items-center text-center gap-3 mb-10">
+    <div class="grid h-16 w-16 place-items-center rounded-full shadow-md" style="background-color:#486551;">
+      <i data-lucide="check" class="h-8 w-8 text-white" stroke-width="2.5"></i>
+    </div>
+    <h1 class="font-display text-3xl sm:text-4xl">Order placed!</h1>
+    <p class="text-sm text-muted-foreground max-w-md">
+      Thank you, {{ order.first_name }}. Your order <span class="font-semibold text-foreground">#{{ order.id }}</span> has been received and is being processed.
+    </p>
+  </div>
+
+  <!-- Order Details Card -->
+  <div class="rounded-3xl border border-border/70 bg-card shadow-soft p-6 sm:p-8">
+
+    <!-- Order Meta -->
+    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+      <div>
+        <p class="text-xs text-muted-foreground uppercase tracking-widest">Order number</p>
+        <p class="text-lg font-semibold">#{{ order.id }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-muted-foreground uppercase tracking-widest">Date</p>
+        <p class="text-sm font-medium">{{ order.created_at|date:"d M Y, H:i" }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-muted-foreground uppercase tracking-widest">Status</p>
+        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-stone-100 text-stone-700">
+          {% if order.payment_status == 'paid' %}Paid{% else %}{{ order.payment_status|title }}{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <hr class="border-border mb-6">
+
+    <!-- Shipping Info -->
+    <div class="mb-6">
+      <h2 class="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-2">Shipping to</h2>
+      <p class="text-sm">{{ order.first_name }} {{ order.last_name }}</p>
+      <p class="text-sm text-muted-foreground">{{ order.address }}</p>
+      <p class="text-sm text-muted-foreground">{{ order.city }}, {{ order.postal_code }}</p>
+      <p class="text-sm text-muted-foreground">{{ order.email }}</p>
+    </div>
+
+    <hr class="border-border mb-6">
+
+    <!-- Items List -->
+    <h2 class="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4">Items ordered</h2>
+    <div class="space-y-4">
+      {% for item in order_items %}
+        <div class="flex gap-4 items-center">
+          <div class="h-16 w-16 shrink-0 rounded-xl bg-stone-200 flex items-center justify-center">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="h-full w-full rounded-xl object-cover" />
+            {% else %}
+              <span class="text-xs text-stone-400">Image</span>
+            {% endif %}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate">{{ item.product.name }}</p>
+              <p class="text-xs text-muted-foreground">Qty: {{ item.quantity }} × ₹{{ item.price }}</p>
+          </div>
+          <span class="text-sm font-semibold whitespace-nowrap">₹{{ item.get_cost }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <hr class="border-border my-6">
+
+    <!-- Totals -->
+    <div class="space-y-2">
+      <div class="flex justify-between text-sm">
+        <span class="text-muted-foreground">Subtotal</span>
+        <span>₹{{ order.get_total_cost }}</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-muted-foreground">Shipping</span>
+        {% if order.get_total_cost > 50 %}
+          <span>Free</span>
+        {% else %}
+          <span>₹0.00</span>
+        {% endif %}
+      </div>
+      <hr class="border-border">
+      <div class="flex justify-between text-lg font-semibold">
+        <span>Total</span>
+        <span>₹{{ order.get_total_cost }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <a href="{% url 'my_orders' %}" class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+      <i data-lucide="package" class="mr-2 h-4 w-4"></i> My Orders
+    </a>
+    <a href="{% url 'shop' %}" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+      Continue Shopping
+    </a>
+  </div>
+
+</div>
+{% endblock %}

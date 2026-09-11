@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Story — Daania{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Hero Section -->
+  <section class="bg-cream">
+    <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
+      <div class="space-y-4">
+        <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Our story</p>
+        <h1 class="font-display text-4xl sm:text-5xl">Made slowly, in small batches</h1>
+        <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
+          Daania started in a home kitchen with one shea butter recipe and a lot of
+          patience. Today we still cure every soap by hand and whip every cream in batches of
+          forty &mdash; because skincare made carefully simply feels better on skin.
+        </p>
+        <a href="{% url 'home' %}" class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
+          Explore the collection
+        </a>
+      </div>
+      <!-- Image Placeholder -->
+      <div class="aspect-[4/3] w-full rounded-[2rem] bg-stone-200 object-cover shadow-lg flex items-center justify-center text-stone-400">
+        Founders preparing small-batch skincare (1200x900)
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <div class="grid gap-6 md:grid-cols-3">
+      
+      <div class="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+        <i data-lucide="leaf" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h2 class="mt-4 text-lg font-semibold">Clean by default</h2>
+        <p class="mt-2 text-sm text-muted-foreground">No parabens, sulphates or synthetic fragrance &mdash; ever.</p>
+      </div>
+
+      <div class="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+        <i data-lucide="heart-handshake" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h2 class="mt-4 text-lg font-semibold">Fairly sourced</h2>
+        <p class="mt-2 text-sm text-muted-foreground">Shea and honey bought direct from women-led co-ops.</p>
+      </div>
+
+      <div class="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+        <i data-lucide="recycle" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h2 class="mt-4 text-lg font-semibold">Low waste</h2>
+        <p class="mt-2 text-sm text-muted-foreground">Glass jars, paper wraps and refills for every cream.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Ingredients Section -->
+  <section class="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <!-- Image Placeholder -->
+      <div class="aspect-[3/2] w-full rounded-[2rem] bg-stone-200 object-cover shadow-sm flex items-center justify-center text-stone-400">
+        Soap bars curing on wooden racks (1200x800)
+      </div>
+      
+      <div class="space-y-4">
+        <h2 class="font-display text-3xl sm:text-4xl">Ingredients you can trace</h2>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          Every batch lists its full ingredient deck on the label &mdash; no proprietary blends, no
+          hidden fragrance. If we can't explain why something is in the jar, it doesn't
+          go in.
+        </p>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li>&bull; Cold-pressed oils, never heat-stripped</li>
+          <li>&bull; Vegan and cruelty free across the range</li>
+          <li>&bull; Dermatologist tested on sensitive skin</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

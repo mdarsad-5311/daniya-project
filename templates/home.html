@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Daania — Natural Creams & Hand-Cut Soaps{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
+      <div class="animate-rise-in space-y-6">
+        <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Small batch · Skin kind</p>
+        <h1 class="font-display text-4xl leading-tight sm:text-5xl lg:text-6xl font-bold text-foreground pb-2">
+          Everyday rituals for calm, glowing skin
+        </h1>
+        <p class="max-w-md text-base leading-relaxed text-muted-foreground">
+          Nourishing creams and hand-cut soaps, made slowly with cold-pressed oils, botanical
+          extracts and nothing you can't pronounce.
+        </p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <a href="{% url 'shop' %}" class="inline-flex h-10 items-center justify-center rounded-full px-8 text-sm font-medium gap-2 transition-all" style="background-color:#495E4F; color:#F7F6F2; box-shadow:0 1px 3px rgba(0,0,0,0.12);" onmouseover="this.style.backgroundColor='#3e5044'" onmouseout="this.style.backgroundColor='#495E4F'">
+            Shop the collection <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </a>
+          <a href="{% url 'about' %}" class="inline-flex h-10 items-center justify-center rounded-full px-8 text-sm font-medium transition-all" style="background-color:#FAF8F5; color:#2D312E; border:1px solid #E4E0D7; box-shadow:0 1px 2px rgba(0,0,0,0.06);" onmouseover="this.style.backgroundColor='#F0EDE7'" onmouseout="this.style.backgroundColor='#FAF8F5'">
+            Our story
+          </a>
+        </div>
+        <div class="flex items-center gap-3 pt-2">
+          {% include 'stars.html' with rating=4.9 size=16 %}
+          <span class="text-sm text-muted-foreground">4.9 average from 1,200+ reviews</span>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="{% static 'images/hero.jpg' %}" alt="Glowing natural skincare products" class="aspect-4/5 w-full rounded-[2rem] object-cover shadow-lg" loading="lazy" />
+        <div class="absolute -bottom-5 left-5 rounded-2xl px-5 py-4" style="background-color:#F0EBE3; box-shadow:0 4px 16px rgba(0,0,0,0.08); border:1px solid rgba(0,0,0,0.04);">
+          <p class="text-sm font-semibold" style="color:#2D312E;">Cruelty free</p>
+          <p class="text-xs" style="color:#7A7570;">Vegan formulas, always</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Perks Section -->
+  <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      
+      <div class="glass-card p-6">
+        <i data-lucide="leaf" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h3 class="mt-4 text-base font-semibold">100% Natural</h3>
+        <p class="mt-1 text-sm text-muted-foreground">Botanical actives, no fillers.</p>
+      </div>
+
+      <div class="glass-card p-6">
+        <i data-lucide="shield-check" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h3 class="mt-4 text-base font-semibold">Dermatologist Tested</h3>
+        <p class="mt-1 text-sm text-muted-foreground">Gentle on sensitive skin.</p>
+      </div>
+
+      <div class="glass-card p-6">
+        <i data-lucide="recycle" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h3 class="mt-4 text-base font-semibold">Eco Packaging</h3>
+        <p class="mt-1 text-sm text-muted-foreground">Recyclable, plastic-free.</p>
+      </div>
+
+      <div class="glass-card p-6">
+        <i data-lucide="truck" class="h-6 w-6 text-primary" stroke-width="1.5"></i>
+        <h3 class="mt-4 text-base font-semibold">Free Shipping</h3>
+        <p class="mt-1 text-sm text-muted-foreground">On every order over $50.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <h2 class="font-display text-3xl sm:text-4xl">Shop by category</h2>
+    <div class="mt-8 grid gap-6 md:grid-cols-3">
+      
+      <!-- Creams -->
+      <a href="{% url 'creams' %}" class="group relative overflow-hidden rounded-3xl glass-card border-none p-0 hover:-translate-y-1.5">
+        <div class="aspect-4/3 w-full overflow-hidden">
+          <img src="{% static 'images/cat_creams.jpg' %}" alt="Hydrating Creams" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+        </div>
+        <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-foreground/80 to-transparent p-6">
+          <h3 class="font-display text-2xl text-background">Hydrating Creams</h3>
+          <p class="mt-1 text-sm text-background/80">Rich, buttery moisture for face and body.</p>
+        </div>
+      </a>
+
+      <!-- Soaps -->
+      <a href="{% url 'soaps' %}" class="group relative overflow-hidden rounded-3xl glass-card border-none p-0 hover:-translate-y-1.5">
+        <div class="aspect-4/3 w-full overflow-hidden">
+          <img src="{% static 'images/cat_soaps.jpg' %}" alt="Hand-Cut Soaps" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+        </div>
+        <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-foreground/80 to-transparent p-6">
+          <h3 class="font-display text-2xl text-background">Hand-Cut Soaps</h3>
+          <p class="mt-1 text-sm text-background/80">Cold-processed for a silky, gentle lather.</p>
+        </div>
+      </a>
+
+      <!-- Sets -->
+      <a href="{% url 'shop' %}" class="group relative overflow-hidden rounded-3xl glass-card border-none p-0 hover:-translate-y-1.5">
+        <div class="aspect-4/3 w-full overflow-hidden">
+          <img src="{% static 'images/cat_sets.jpg' %}" alt="Gift Sets" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+        </div>
+        <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-foreground/80 to-transparent p-6">
+          <h3 class="font-display text-2xl text-background">Gift Sets</h3>
+          <p class="mt-1 text-sm text-background/80">Curated routines for you or a loved one.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Best Sellers -->
+  <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Loved by many</p>
+        <h2 class="font-display text-3xl sm:text-4xl">Best sellers</h2>
+      </div>
+      <a href="{% url 'shop' %}" class="inline-flex h-10 items-center justify-center rounded-full border px-6 text-sm font-semibold transition-all hover:opacity-80" style="border-color:#486551; color:#486551;">
+        View all <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>
+      </a>
+    </div>
+    
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% for product in best_sellers %}
+        {% include 'products/product_card.html' with product=product %}
+      {% empty %}
+        <!-- Temporary dummy placeholders if DB is empty to preserve UI layout for demo -->
+        {% include 'products/product_card.html' with product=None %}
+        {% include 'products/product_card.html' with product=None %}
+        {% include 'products/product_card.html' with product=None %}
+        {% include 'products/product_card.html' with product=None %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Promo Section -->
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div class="grid items-center gap-8 overflow-hidden rounded-[2rem] bg-[#58725C] p-8 text-white shadow-lift sm:p-12 lg:grid-cols-2">
+      <div class="space-y-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] opacity-80">Limited offer</p>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold">20% off the soap collection</h2>
+        <p class="max-w-md text-sm opacity-90">
+          Hand-cut, slow-cured bars in honey, charcoal, rose and aloe. Cured four weeks for a silkier lather.
+        </p>
+        <a href="{% url 'soaps' %}" class="inline-flex h-12 items-center justify-center rounded-full bg-[#EFEBE3] px-8 text-sm font-bold text-[#2C392E] transition-all hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 mt-4">
+          Shop soaps
+        </a>
+      </div>
+      <img src="{% static 'images/promo.jpg' %}" alt="Soap Collection Promo" class="aspect-3/2 w-full rounded-3xl object-cover" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <div class="flex items-center gap-2">
+      <i data-lucide="sparkles" class="h-5 w-5 text-primary" stroke-width="1.6"></i>
+      <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Kind words</p>
+    </div>
+    <h2 class="mt-2 font-display text-3xl sm:text-4xl">What our community says</h2>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      
+      <figure class="glass-card p-6">
+        <div class="flex text-yellow-500">
+          <i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i>
+        </div>
+        <blockquote class="mt-3 text-sm leading-relaxed text-muted-foreground">
+          “The Honey Glow cream absolutely transformed my dry winter skin. Will buy again!”
+        </blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          <span class="grid h-10 w-9 place-items-center rounded-full bg-cream text-xs font-semibold">SA</span>
+          <span class="text-sm font-semibold">Sarah A.</span>
+        </figcaption>
+      </figure>
+
+      <figure class="glass-card p-6">
+        <div class="flex text-yellow-500">
+            <i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i>
+        </div>
+        <blockquote class="mt-3 text-sm leading-relaxed text-muted-foreground">
+          “I love how minimal the ingredients are. The soap lather is so incredibly soft.”
+        </blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          <span class="grid h-10 w-9 place-items-center rounded-full bg-cream text-xs font-semibold">MR</span>
+          <span class="text-sm font-semibold">Mark R.</span>
+        </figcaption>
+      </figure>
+      
+      <figure class="glass-card p-6">
+        <div class="flex text-yellow-500">
+            <i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i>
+        </div>
+        <blockquote class="mt-3 text-sm leading-relaxed text-muted-foreground">
+          “Finally a brand that actually uses zero plastic in their shipping boxes!”
+        </blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          <span class="grid h-10 w-9 place-items-center rounded-full bg-cream text-xs font-semibold">JL</span>
+          <span class="text-sm font-semibold">Jessica L.</span>
+        </figcaption>
+      </figure>
+
+      <figure class="glass-card p-6">
+        <div class="flex text-yellow-500">
+            <i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i><i data-lucide="star" class="h-3 w-3 fill-current"></i>
+        </div>
+        <blockquote class="mt-3 text-sm leading-relaxed text-muted-foreground">
+          “The Charcoal Detox bar cleared up my body breakouts in less than a week.”
+        </blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          <span class="grid h-10 w-9 place-items-center rounded-full bg-cream text-xs font-semibold">DT</span>
+          <span class="text-sm font-semibold">David T.</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- Instagram / Gallery -->
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+    <h2 class="font-display text-3xl sm:text-4xl">Follow the glow</h2>
+    <p class="mt-1 text-sm text-muted-foreground">@daania</p>
+    <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <!-- 6 gallery images -->
+      <img src="{% static 'images/gallery_1.jpg' %}" alt="Instagram post 1" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+      <img src="{% static 'images/gallery_2.jpg' %}" alt="Instagram post 2" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+      <img src="{% static 'images/gallery_3.jpg' %}" alt="Instagram post 3" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+      <img src="{% static 'images/gallery_4.jpg' %}" alt="Instagram post 4" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+      <img src="{% static 'images/gallery_5.jpg' %}" alt="Instagram post 5" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+      <img src="{% static 'images/gallery_6.jpg' %}" alt="Instagram post 6" class="aspect-square w-full rounded-2xl object-cover transition-soft hover:-translate-y-1 hover:shadow-lg" loading="lazy" />
+    </div>
+  </section>
+</div>
+{% endblock %}

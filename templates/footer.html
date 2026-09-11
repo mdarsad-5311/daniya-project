@@ -1,0 +1,102 @@
+<!-- Footer Component Translated to Django/Tailwind -->
+<footer class="mt-24" style="background-color: #EFECE6; border-top: 1px solid #E0DAD0;">
+  <div class="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.4fr_repeat(3,1fr)_1.4fr]">
+    
+    <!-- Brand & Social -->
+    <div class="space-y-4">
+      <a href="{% url 'home' %}" class="flex items-center gap-2 group">
+        <span class="grid h-10 w-9 place-items-center rounded-xl text-sm font-semibold text-white shadow-md group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all" style="background-color: #4A604A;">
+          D
+        </span>
+        <span class="font-display text-2xl font-bold group-hover:text-primary transition-colors">Daania</span>
+      </a>
+      <p class="max-w-xs text-sm leading-relaxed text-muted-foreground">
+        Small-batch creams and hand-cut soaps made with simple, skin-kind ingredients you can pronounce.
+      </p>
+      <div class="flex gap-2">
+        <a href="#" aria-label="Instagram" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:-translate-y-0.5" style="background-color: #FFFFFF; border: 1px solid #E2DDD5; color: #6B655B;">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:-translate-y-0.5" style="background-color: #FFFFFF; border: 1px solid #E2DDD5; color: #6B655B;">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" aria-label="Twitter" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:-translate-y-0.5" style="background-color: #FFFFFF; border: 1px solid #E2DDD5; color: #6B655B;">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+        </a>
+        <a href="#" aria-label="Youtube" class="grid h-10 w-9 place-items-center rounded-full transition-soft hover:-translate-y-0.5" style="background-color: #FFFFFF; border: 1px solid #E2DDD5; color: #6B655B;">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Shop Links -->
+    <div class="space-y-3">
+      <h4 class="text-sm font-semibold uppercase tracking-widest">Shop</h4>
+      <ul class="space-y-2">
+        <li><a href="{% url 'shop' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">All products</a></li>
+        <li><a href="{% url 'creams' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Creams</a></li>
+        <li><a href="{% url 'soaps' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Soaps</a></li>
+        <li><a href="{% url 'cart' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Your bag</a></li>
+      </ul>
+    </div>
+
+    <!-- Customer Care Links -->
+    <div class="space-y-3">
+      <h4 class="text-sm font-semibold uppercase tracking-widest">Customer Care</h4>
+      <ul class="space-y-2">
+        <li><a href="{% url 'contact' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Contact us</a></li>
+        <li><a href="{% url 'contact' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Shipping &amp; returns</a></li>
+        <li><a href="{% url 'contact' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">FAQs</a></li>
+        <li><a href="{% url 'contact' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Track order</a></li>
+      </ul>
+    </div>
+
+    <!-- About Links -->
+    <div class="space-y-3">
+      <h4 class="text-sm font-semibold uppercase tracking-widest">About</h4>
+      <ul class="space-y-2">
+        <li><a href="{% url 'about' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Our story</a></li>
+        <li><a href="{% url 'about' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Ingredients</a></li>
+        <li><a href="{% url 'about' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Sustainability</a></li>
+        <li><a href="{% url 'about' %}" class="text-sm text-muted-foreground transition-soft hover:text-primary">Press</a></li>
+      </ul>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="space-y-3">
+      <h4 class="text-sm font-semibold uppercase tracking-widest">Newsletter</h4>
+      <p class="text-sm text-muted-foreground">
+        Skincare notes and early access to new batches. No noise.
+      </p>
+      <!-- Newsletter form integrated with HTMX -->
+      <div id="newsletter-form-container" class="relative">
+        <form
+          class="flex flex-col gap-2 sm:flex-row lg:flex-col"
+          hx-post="{% url 'subscribe' %}"
+          hx-swap="outerHTML"
+          hx-target="#newsletter-form-container"
+        >
+          {% csrf_token %}
+          <input 
+            type="email" 
+            name="email"
+            required 
+            placeholder="your@email.com" 
+            class="flex h-12 w-full rounded-full px-4 py-2 text-sm focus-visible:outline-none transition-all disabled:cursor-not-allowed disabled:opacity-50"
+            style="background-color: #FFFFFF; border: 1px solid #E2DDD5; color: #1A1A1A;"
+          />
+          <button type="submit" class="inline-flex items-center justify-center rounded-full text-sm font-semibold transition-all focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none h-12 px-8 text-white hover:-translate-y-0.5" style="background-color: #4A604A;">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #E0DAD0; background-color: #EFECE6;">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs sm:flex-row sm:px-6" style="color: #5A554C;">
+      <p>&copy; <span x-data x-text="new Date().getFullYear()"></span> Daania. All rights reserved.</p>
+      <p>Demo storefront &mdash; UI concept only.</p>
+    </div>
+  </div>
+</footer>

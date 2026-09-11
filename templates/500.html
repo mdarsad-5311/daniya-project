@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error - Daania{% endblock %}
+
+{% block content %}
+<div class="flex min-h-[70vh] items-center justify-center bg-background px-4">
+  <div class="max-w-md text-center">
+    <h1 class="font-display text-2xl font-semibold tracking-tight text-foreground">
+      This page didn't load
+    </h1>
+    <p class="mt-2 text-sm text-muted-foreground">
+      Something went wrong on our end. You can try refreshing or head back home.
+    </p>
+    <div class="mt-6 flex flex-wrap justify-center gap-2">
+      <a
+        href="{{ request.path }}"
+        class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+      >
+        Try again
+      </a>
+      <a
+        href="{% url 'home' %}"
+        class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+      >
+        Go home
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

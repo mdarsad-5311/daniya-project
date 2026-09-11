@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shop All Creams & Soaps — Daania{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+  <p class="text-sm font-medium uppercase tracking-widest text-muted-foreground">Collection</p>
+  <h1 class="font-display text-4xl sm:text-5xl">Shop all</h1>
+  <p class="mt-2 text-sm text-muted-foreground">
+    {{ products|length }} product{{ products|length|pluralize }}
+    {% if request.GET.q %} matching “{{ request.GET.q }}”{% endif %}
+  </p>
+
+  <div id="shop-container" class="mt-8 grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]" x-data="{ filtersOpen: false }">
+    
+    <!-- Desktop Sidebar Filters -->
+    <aside class="hidden lg:block">
+      <form id="desktop-filters" method="GET" action="{% url 'shop' %}" class="space-y-8"
+            hx-get="{% url 'shop' %}" 
+            hx-target="#shop-container" 
+            hx-select="#shop-container"
+            hx-swap="outerHTML"
+            hx-push-url="true"
+            hx-trigger="change">
+        <!-- Retain search query -->
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        {% if request.GET.sort %}<input type="hidden" name="sort" value="{{ request.GET.sort }}">{% endif %}
+
+        <!-- Categories -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-semibold uppercase tracking-widest">Category</h3>
+          {% for cat in all_categories %}
+          <div class="flex items-center gap-3">
+            <input type="checkbox" id="cat-{{ cat.slug }}" name="category" value="{{ cat.slug }}" 
+                   class="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
+                   {% if cat.slug in selected_categories %}checked{% endif %}>
+            <label for="cat-{{ cat.slug }}" class="text-sm font-normal">{{ cat.name }}</label>
+          </div>
+          {% empty %}
+            <!-- Demo placeholders if no DB categories -->
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="demo-creams" class="h-4 w-4 rounded border-primary text-primary">
+              <label for="demo-creams" class="text-sm font-normal">Face Creams</label>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="demo-soaps" class="h-4 w-4 rounded border-primary text-primary">
+              <label for="demo-soaps" class="text-sm font-normal">Natural Soaps</label>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Max Price -->
+        <div class="space-y-3" x-data="{ price: {{ request.GET.max_price|default:60 }} }">
+          <h3 class="text-sm font-semibold uppercase tracking-widest">Max price</h3>
+          <div class="flex items-center gap-4">
+            <input type="range" id="max-price-range" name="max_price" min="10" max="60" step="1" 
+                   value="{{ request.GET.max_price|default:60 }}"
+                   class="w-full"
+                   style="accent-color:#486551; background: linear-gradient(to right, #486551 100%, #D1C4B0 100%); height:4px; border-radius:4px; outline:none; cursor:pointer;"
+                   x-model="price"
+                   hx-trigger="change, mouseup">
+          </div>
+          <p class="text-sm text-muted-foreground">Up to $<span x-text="price">{{ request.GET.max_price|default:60 }}</span></p>
+        </div>
+
+        <!-- Rating -->
+        <div class="space-y-3" x-data="{
+          open: false,
+          selectedVal: '{{ request.GET.min_rating|default:"0" }}',
+          options: [
+            { value: '0', label: 'All ratings' },
+            { value: '4.5', label: '4.5 & up' },
+            { value: '4.7', label: '4.7 & up' },
+            { value: '4.8', label: '4.8 & up' }
+          ],
+          get currentLabel() {
+            const opt = this.options.find(o => o.value === this.selectedVal);
+            return opt ? opt.label : 'All ratings';
+          },
+          select(val) {
+            this.selectedVal = val;
+            this.open = false;
+            this.$nextTick(() => {
+              const input = this.$refs.ratingInput;
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+          }
+        }">
+          <h3 class="text-sm font-semibold uppercase tracking-widest">Rating</h3>
+          <input type="hidden" name="min_rating" :value="selectedVal" x-ref="ratingInput">
+          
+          <div class="relative">
+            <button 
+              type="button" 
+              id="rating-dropdown-button"
+              @click="open = !open" 
+              @click.away="open = false"
+              class="flex h-10 w-full items-center justify-between rounded-full border border-stone-300 bg-white px-4 py-2 text-sm text-stone-800 transition-all hover:border-[#486551] focus:outline-none focus:ring-2 focus:ring-[#486551] focus:ring-offset-2"
+              style="background-color: #FFFFFF !important;"
+              aria-haspopup="listbox"
+              :aria-expanded="open"
+            >
+              <span class="truncate font-medium text-stone-800" x-text="currentLabel">All ratings</span>
+              <svg class="h-4 w-4 shrink-0 text-stone-500 transition-transform duration-200" :class="{ 'rotate-180 text-[#486551]': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Custom Rating Dropdown Menu -->
+            <div 
+              x-show="open" 
+              x-transition:enter="transition ease-out duration-150"
+              x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+              x-transition:leave="transition ease-in duration-100"
+              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+              x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+              style="display: none; background-color: #FFFFFF !important;" 
+              class="absolute left-0 right-0 z-50 mt-1.5 overflow-hidden rounded-2xl border border-stone-200 bg-white py-1 shadow-xl ring-1 ring-black/5"
+            >
+              <template x-for="opt in options" :key="opt.value">
+                <div 
+                  @click="select(opt.value)"
+                  class="group flex cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150"
+                  :class="selectedVal === opt.value ? 'bg-[#486551] font-semibold text-white' : 'text-stone-700 hover:bg-[#486551] hover:text-white'"
+                >
+                  <span x-text="opt.label"></span>
+                  <svg x-show="selectedVal === opt.value" class="h-4 w-4 shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+        
+        <noscript><button type="submit" class="btn">Apply</button></noscript>
+      </form>
+    </aside>
+
+    <!-- Main Content -->
+    <div>
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <!-- Sorting (LEFT) -->
+        <form id="sort-form" method="GET" action="{% url 'shop' %}" class=""
+              hx-get="{% url 'shop' %}"
+              hx-target="#shop-container"
+              hx-select="#shop-container"
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              hx-trigger="change">
+          <!-- Retain filters -->
+          {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+          {% for cat in selected_categories %}<input type="hidden" name="category" value="{{ cat }}">{% endfor %}
+          {% if request.GET.max_price %}<input type="hidden" name="max_price" value="{{ request.GET.max_price }}">{% endif %}
+          {% if request.GET.min_rating %}<input type="hidden" name="min_rating" value="{{ request.GET.min_rating }}">{% endif %}
+          
+          <div class="relative" x-data="{
+            open: false,
+            selectedVal: '{{ request.GET.sort|default:"featured" }}',
+            options: [
+              { value: 'featured', label: 'Featured' },
+              { value: 'price-asc', label: 'Price: low to high' },
+              { value: 'price-desc', label: 'Price: high to low' },
+              { value: 'rating', label: 'Top rated' }
+            ],
+            get currentLabel() {
+              const opt = this.options.find(o => o.value === this.selectedVal);
+              return opt ? opt.label : 'Featured';
+            },
+            select(val) {
+              this.selectedVal = val;
+              this.open = false;
+              this.$nextTick(() => {
+                const input = this.$refs.sortInput;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+              });
+            }
+          }">
+            <input type="hidden" name="sort" :value="selectedVal" x-ref="sortInput">
+            
+            <button 
+              type="button" 
+              id="sort-dropdown-button"
+              @click="open = !open" 
+              @click.away="open = false"
+              class="flex h-10 w-48 items-center justify-between rounded-full border border-stone-300 bg-white px-4 py-2 text-sm text-stone-800 transition-all hover:border-[#486551] focus:outline-none focus:ring-2 focus:ring-[#486551] focus:ring-offset-2"
+              style="background-color: #FFFFFF !important;"
+              aria-haspopup="listbox"
+              :aria-expanded="open"
+            >
+              <span class="truncate font-medium text-stone-800" x-text="currentLabel">Featured</span>
+              <svg class="h-4 w-4 shrink-0 text-stone-500 transition-transform duration-200" :class="{ 'rotate-180 text-[#486551]': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Custom Sort Dropdown Menu -->
+            <div 
+              x-show="open" 
+              x-transition:enter="transition ease-out duration-150"
+              x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+              x-transition:leave="transition ease-in duration-100"
+              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+              x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+              style="display: none; background-color: #FFFFFF !important;" 
+              class="absolute left-0 z-50 mt-1.5 w-52 overflow-hidden rounded-2xl border border-stone-200 bg-white py-1 shadow-xl ring-1 ring-black/5"
+            >
+              <template x-for="opt in options" :key="opt.value">
+                <div 
+                  @click="select(opt.value)"
+                  class="group flex cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150"
+                  :class="selectedVal === opt.value ? 'bg-[#486551] font-semibold text-white' : 'text-stone-700 hover:bg-[#486551] hover:text-white'"
+                >
+                  <span x-text="opt.label"></span>
+                  <svg x-show="selectedVal === opt.value" class="h-4 w-4 shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </template>
+            </div>
+          </div>
+        </form>
+
+        <!-- Mobile Filter Toggle (RIGHT) -->
+        <button type="button" @click="filtersOpen = !filtersOpen" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground lg:hidden">
+          <i data-lucide="sliders-horizontal" class="mr-2 h-4 w-4"></i> Filters
+        </button>
+      </div>
+
+      <!-- Mobile Filters (Alpine hidden) -->
+      <div x-show="filtersOpen" style="display: none;" class="mb-8 rounded-3xl border border-border bg-card p-6 lg:hidden">
+         <p class="text-sm text-muted-foreground mb-4">Filters are applied automatically on desktop. For mobile, use the desktop view or implement a dedicated modal.</p>
+      </div>
+
+      <!-- Product Grid -->
+      {% if not products and not dummy_fallback %}
+        <p class="rounded-3xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
+          No products match those filters.
+        </p>
+      {% else %}
+        <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {% for product in products %}
+            {% include 'products/product_card.html' with product=product %}
+          {% empty %}
+            <!-- Demo placeholders if DB empty -->
+            {% include 'products/product_card.html' with product=None %}
+            {% include 'products/product_card.html' with product=None %}
+            {% include 'products/product_card.html' with product=None %}
+            {% include 'products/product_card.html' with product=None %}
+            {% include 'products/product_card.html' with product=None %}
+            {% include 'products/product_card.html' with product=None %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  /* ── Range slider: update green fill track dynamically ── */
+  function updateRangeTrack(input) {
+    const min = +input.min || 10;
+    const max = +input.max || 60;
+    const val = +input.value;
+    const pct = ((val - min) / (max - min)) * 100;
+    input.style.background = `linear-gradient(to right, #486551 ${pct}%, #D1C4B0 ${pct}%)`;
+    input.style.accentColor = '#486551';
+  }
+  // Run on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('max-price-range');
+    if (el) {
+      updateRangeTrack(el);
+      el.addEventListener('input', function() { updateRangeTrack(el); });
+      el.addEventListener('change', function() { updateRangeTrack(el); });
+    }
+  });
+  // Also run immediately in case DOM is already ready
+  var el2 = document.getElementById('max-price-range');
+  if (el2) { updateRangeTrack(el2); }
+</script>
+{% endblock %}
+
+
+

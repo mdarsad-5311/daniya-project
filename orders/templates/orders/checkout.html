@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout — Daania{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+
+  <!-- Breadcrumb -->
+  <nav class="text-xs text-muted-foreground">
+    <a href="{% url 'home' %}" class="transition-soft hover:text-primary">Home</a> /
+    <a href="{% url 'cart' %}" class="transition-soft hover:text-primary">Your bag</a> /
+    <span class="text-foreground">Checkout</span>
+  </nav>
+
+  <h1 class="mt-4 font-display text-4xl sm:text-5xl">Checkout</h1>
+
+  <div class="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_400px]">
+
+    <!-- ─── Customer Details Form ─── -->
+    <form method="POST" id="checkout-form" class="space-y-6">
+      {% csrf_token %}
+
+      <div class="rounded-3xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+        <h2 class="font-display text-2xl font-semibold mb-6">Shipping details</h2>
+
+        {% if form.non_field_errors %}
+          <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Name row -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label for="id_first_name" class="text-sm font-medium">{{ form.first_name.label }}</label>
+            <input type="text" id="id_first_name" name="first_name"
+              value="{{ form.first_name.value|default_if_none:'' }}"
+              placeholder="Jane" autocomplete="given-name" required
+              class="flex h-11 w-full rounded-2xl border {% if form.first_name.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.first_name.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.first_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div class="space-y-1.5">
+            <label for="id_last_name" class="text-sm font-medium">{{ form.last_name.label }}</label>
+            <input type="text" id="id_last_name" name="last_name"
+              value="{{ form.last_name.value|default_if_none:'' }}"
+              placeholder="Doe" autocomplete="family-name" required
+              class="flex h-11 w-full rounded-2xl border {% if form.last_name.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.last_name.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.last_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mt-4 space-y-1.5">
+          <label for="id_email" class="text-sm font-medium">{{ form.email.label }}</label>
+          <input type="email" id="id_email" name="email"
+            value="{{ form.email.value|default_if_none:'' }}"
+            placeholder="jane@example.com" autocomplete="email" required
+            class="flex h-11 w-full rounded-2xl border {% if form.email.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+          {% if form.email.errors %}
+            <p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Address -->
+        <div class="mt-4 space-y-1.5">
+          <label for="id_address" class="text-sm font-medium">{{ form.address.label }}</label>
+          <input type="text" id="id_address" name="address"
+            value="{{ form.address.value|default_if_none:'' }}"
+            placeholder="123 Rose Garden Lane" autocomplete="street-address" required
+            class="flex h-11 w-full rounded-2xl border {% if form.address.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+          {% if form.address.errors %}
+            <p class="text-xs text-red-500 mt-1">{{ form.address.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- City + Postal -->
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label for="id_city" class="text-sm font-medium">{{ form.city.label }}</label>
+            <input type="text" id="id_city" name="city"
+              value="{{ form.city.value|default_if_none:'' }}"
+              placeholder="Mumbai" autocomplete="address-level2" required
+              class="flex h-11 w-full rounded-2xl border {% if form.city.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.city.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.city.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div class="space-y-1.5">
+            <label for="id_postal_code" class="text-sm font-medium">{{ form.postal_code.label }}</label>
+            <input type="text" id="id_postal_code" name="postal_code"
+              value="{{ form.postal_code.value|default_if_none:'' }}"
+              placeholder="400001" autocomplete="postal-code" required
+              class="flex h-11 w-full rounded-2xl border {% if form.postal_code.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.postal_code.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.postal_code.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Place Order Button (mobile: appears below form) -->
+      <button type="submit" class="inline-flex w-full h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 lg:hidden">
+        <i data-lucide="lock" class="mr-2 h-4 w-4"></i> Place Order
+      </button>
+    </form>
+
+    <!-- ─── Order Summary Sidebar ─── -->
+    <aside class="h-fit space-y-4 rounded-3xl border border-border/70 bg-cream p-6 shadow-sm">
+      <h2 class="font-display text-2xl">Order summary</h2>
+
+      <!-- Items -->
+      <div class="space-y-4">
+        {% for item in cart_items %}
+          <div class="flex gap-3">
+            <div class="h-16 w-16 shrink-0 rounded-xl bg-stone-200 flex items-center justify-center">
+              {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="h-full w-full rounded-xl object-cover" />
+              {% else %}
+                <span class="text-xs text-stone-400">Image</span>
+              {% endif %}
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-semibold">{{ item.product.name }}</p>
+              <p class="text-xs text-muted-foreground">Qty: {{ item.quantity }}</p>
+            </div>
+            <span class="text-sm font-semibold whitespace-nowrap">₹{{ item.total_price }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <hr class="border-border">
+
+      <div class="flex justify-between text-sm">
+        <span class="text-muted-foreground">Subtotal</span>
+        <span>₹{{ subtotal }}</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-muted-foreground">Shipping</span>
+        {% if subtotal > 50 %}
+          <span>Free</span>
+        {% else %}
+          <span>₹0.00</span>
+        {% endif %}
+      </div>
+
+      <hr class="border-border">
+
+      <div class="flex justify-between text-lg font-semibold">
+        <span>Total</span>
+        <span>₹{{ total }}</span>
+      </div>
+
+      <!-- Place Order Button (desktop) -->
+      <button type="submit" form="checkout-form" class="hidden lg:inline-flex w-full h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
+        <i data-lucide="lock" class="mr-2 h-4 w-4"></i> Place Order
+      </button>
+
+      <div class="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
+        <i data-lucide="shield-check" class="h-3.5 w-3.5"></i>
+        Secure payment powered by Razorpay.
+      </div>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}

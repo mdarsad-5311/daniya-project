@@ -1,0 +1,237 @@
+<!-- Navbar Component Translated from React to Django/Alpine.js -->
+<header :class="scrolled ? 'glass border-b border-white/40 shadow-soft' : 'bg-transparent'"
+  class="sticky top-0 z-50 w-full transition-soft">
+  <div
+    class="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-4 sm:px-6 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
+
+    <!-- Brand Logo -->
+    <a href="{% url 'home' %}" class="flex min-w-0 items-center gap-2 group">
+      <span
+        class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#486551] text-sm font-bold text-white shadow-md group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all">
+        D
+      </span>
+      <span class="truncate font-display text-2xl font-bold tracking-tight text-foreground group-hover:text-[#486551] transition-colors">Daania</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden items-center justify-center gap-7 lg:flex">
+      <a href="{% url 'home' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary {% if request.path == '/' %}text-primary{% endif %}">Home</a>
+      <a href="{% url 'shop' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Shop</a>
+      <a href="{% url 'creams' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Creams</a>
+      <a href="{% url 'soaps' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Soaps</a>
+      <a href="{% url 'about' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary">About</a>
+      <a href="{% url 'contact' %}"
+        class="relative text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Contact</a>
+    </nav>
+
+    <!-- Actions (Search, Wishlist, Cart, Menu) -->
+    <div class="flex items-center justify-end gap-1">
+
+      <!-- Search Toggle -->
+      <button type="button"
+        class="inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors"
+        @click="searchOpen = !searchOpen">
+        <i data-lucide="search" class="h-5 w-5" stroke-width="1.6" x-show="!searchOpen"></i>
+        <i data-lucide="x" class="h-5 w-5" x-show="searchOpen" style="display: none;"></i>
+      </button>
+
+      <!-- Wishlist Link -->
+      <a href="{% url 'wishlist' %}"
+        title="Wishlist"
+        class="relative inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors">
+        <i data-lucide="heart" class="h-5 w-5" stroke-width="1.6"></i>
+        {% if wishlist_count and wishlist_count > 0 %}
+        <span
+          class="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.6rem] font-semibold text-primary-foreground">
+          {{ wishlist_count }}
+        </span>
+        {% endif %}
+      </a>
+
+      <!-- Authentication -->
+      {% if request.user.is_authenticated %}
+      <div class="hidden items-center gap-3 lg:flex">
+        <a href="{% url 'profile' %}" class="text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Profile</a>
+        <a href="{% url 'my_orders' %}" class="text-sm font-medium text-foreground/80 transition-soft hover:text-primary">My Orders</a>
+        <form method="POST" action="{% url 'logout' %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="text-sm font-medium text-red-600 transition-soft hover:text-red-700">Logout</button>
+        </form>
+      </div>
+      <a href="{% url 'profile' %}" title="Profile" class="inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors lg:hidden">
+        <i data-lucide="user" class="h-5 w-5" stroke-width="1.6"></i>
+      </a>
+      {% else %}
+      <div class="hidden items-center gap-3 lg:flex">
+        <a href="{% url 'register' %}" class="text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Register</a>
+        <a href="{% url 'login' %}" class="text-sm font-medium text-foreground/80 transition-soft hover:text-primary">Login</a>
+      </div>
+      <a href="{% url 'login' %}" title="Login" class="inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors lg:hidden">
+        <i data-lucide="user" class="h-5 w-5" stroke-width="1.6"></i>
+      </a>
+      {% endif %}
+
+      <!-- Cart Toggle -->
+      <button type="button"
+        class="relative inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors"
+        @click="cartOpen = true">
+        <i data-lucide="shopping-bag" class="h-5 w-5" stroke-width="1.6"></i>
+        {% if cart_count and cart_count > 0 %}
+        <span
+          class="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.6rem] font-semibold text-primary-foreground">
+          {{ cart_count }}
+        </span>
+        {% endif %}
+      </button>
+
+      <!-- Mobile Menu Toggle -->
+      <button type="button"
+        class="inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors lg:hidden"
+        @click="menuOpen = true">
+        <i data-lucide="menu" class="h-5 w-5" stroke-width="1.6"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Bar Dropdown -->
+  <div x-show="searchOpen" x-transition class="glass border-b border-white/40 shadow-soft"
+    style="display: none;">
+    <form action="{% url 'shop' %}" method="GET" class="mx-auto flex max-w-3xl gap-2 px-4 py-4 sm:px-6">
+      <input type="text" name="q" placeholder="Search creams, soaps, ingredients…"
+        class="flex h-12 w-full rounded-2xl border border-white/40 bg-white/50 px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white transition-all disabled:cursor-not-allowed disabled:opacity-50 shadow-inner" />
+      <button type="submit"
+        class="inline-flex items-center justify-center rounded-2xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background btn-primary h-12 px-8">
+        Search
+      </button>
+    </form>
+  </div>
+</header>
+
+<!-- Mobile Menu Sheet -->
+<div x-show="menuOpen" style="display: none;" class="relative z-50" aria-labelledby="slide-over-title" role="dialog"
+  aria-modal="true">
+  <div x-show="menuOpen" x-transition.opacity class="fixed inset-0 bg-background/80 backdrop-blur-sm"></div>
+  <div class="fixed inset-0 overflow-hidden">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+        <div x-show="menuOpen" x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
+          x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+          x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
+          x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+          @click.away="menuOpen = false" class="pointer-events-auto w-screen max-w-sm">
+          <div
+            class="flex h-full flex-col overflow-y-scroll bg-background py-6 shadow-xl w-[85vw] sm:max-w-sm sm:w-full border-l border-border">
+            <div class="px-4 sm:px-6 flex items-center justify-between">
+              <h2 class="font-display text-2xl font-semibold" id="slide-over-title">Daania</h2>
+              <button @click="menuOpen = false" type="button"
+                class="rounded-md text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                <span class="sr-only">Close panel</span>
+                <i data-lucide="x" class="h-6 w-6"></i>
+              </button>
+            </div>
+            <div class="relative mt-6 flex-1 px-4 sm:px-6">
+              <nav class="flex flex-col gap-1">
+                <a href="{% url 'home' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">Home</a>
+                <a href="{% url 'shop' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">Shop</a>
+                <a href="{% url 'creams' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">Creams</a>
+                <a href="{% url 'soaps' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">Soaps</a>
+                <a href="{% url 'about' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">About</a>
+                <a href="{% url 'contact' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">Contact</a>
+
+                <hr class="my-2 border-border">
+
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'profile' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream flex items-center justify-between">
+                  <span>My Account</span>
+                  <span class="text-xs text-muted-foreground">{{ request.user.first_name|default:request.user.username }}</span>
+                </a>
+                <a href="{% url 'my_orders' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">
+                  My Orders
+                </a>
+                <a href="{% url 'wishlist' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream flex items-center justify-between">
+                  <span class="flex items-center gap-2">
+                    <i data-lucide="heart" class="h-4 w-4" stroke-width="1.6"></i>
+                    My Wishlist
+                  </span>
+                  {% if wishlist_count and wishlist_count > 0 %}
+                  <span class="grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+                    {{ wishlist_count }}
+                  </span>
+                  {% endif %}
+                </a>
+                <form method="POST" action="{% url 'logout' %}" class="w-full">
+                  {% csrf_token %}
+                  <button type="submit"
+                    class="w-full text-left rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-red-50 text-red-600 flex items-center gap-2">
+                    <i data-lucide="log-out" class="h-4 w-4" stroke-width="1.6"></i>
+                    Sign Out
+                  </button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">
+                  Sign In
+                </a>
+                <a href="{% url 'register' %}"
+                  class="rounded-2xl px-4 py-3 text-base font-medium transition-soft hover:bg-cream">
+                  Create Account
+                </a>
+                {% endif %}
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wishlist Sheet -->
+<div x-show="wishOpen" style="display: none;" class="relative z-50" aria-labelledby="slide-over-title" role="dialog"
+  aria-modal="true">
+  <div x-show="wishOpen" x-transition.opacity class="fixed inset-0 bg-background/80 backdrop-blur-sm"></div>
+  <div class="fixed inset-0 overflow-hidden">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+        <div x-show="wishOpen" x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
+          x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+          x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
+          x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+          @click.away="wishOpen = false" class="pointer-events-auto w-screen max-w-md">
+          <div class="flex h-full flex-col overflow-y-scroll bg-background py-6 shadow-xl border-l border-border">
+            <div class="px-4 sm:px-6 flex items-center justify-between">
+              <h2 class="font-display text-2xl font-semibold" id="slide-over-title">Wishlist</h2>
+              <button @click="wishOpen = false" type="button"
+                class="rounded-md text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                <span class="sr-only">Close panel</span>
+                <i data-lucide="x" class="h-6 w-6"></i>
+              </button>
+            </div>
+            <div class="mt-4 space-y-4 overflow-y-auto px-4 pb-6">
+              <!-- Example Empty State -->
+              <p class="text-sm text-muted-foreground">
+                Nothing saved yet. Tap the heart on any product to keep it here.
+              </p>
+
+              <!-- Items would be rendered here via Django loops -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
