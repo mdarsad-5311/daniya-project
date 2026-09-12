@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@source "../..";
+
 /*
  * Glow & Pure design system — soft cream, ivory, beige and earthy green.
  * All colors are oklch tokens; never hardcode colors in components.
@@ -227,11 +230,10 @@
   box-shadow: var(--shadow-card);
   border-radius: var(--radius-2xl);
   transition: all 0.3s var(--ease-soft);
-}
-
-@utility glass-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
 }
 
 @utility btn-primary {
@@ -240,11 +242,10 @@
   border: none;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-}
-
-@utility btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.23);
-  transform: translateY(-2px);
+  &:hover {
+    box-shadow: 0 6px 20px rgba(72, 101, 81, 0.23);
+    transform: translateY(-2px);
+  }
 }
 
 @utility eyebrow {

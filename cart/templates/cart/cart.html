@@ -72,7 +72,7 @@
                   </form>
                 </div>
                 <span class="text-base font-semibold">
-                  ${{ line.total_price }}
+                  ₹{{ line.total_price }}
                 </span>
               </div>
             </div>
@@ -92,18 +92,14 @@
         <h2 class="font-display text-2xl">Order summary</h2>
         <div class="flex justify-between text-sm">
           <span class="text-muted-foreground">Subtotal</span>
-          <span>${{ subtotal|default:"0.00" }}</span>
-        </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-muted-foreground">You save</span>
-          <span class="text-primary">−${{ discount|default:"0.00" }}</span>
+          <span>₹{{ subtotal|default:"0.00" }}</span>
         </div>
         <div class="flex justify-between text-sm">
           <span class="text-muted-foreground">Shipping</span>
-          {% if subtotal|default:0 > 50 %}
-            <span>Free</span>
+          {% if shipping == 0 or shipping == 0.00 %}
+            <span class="text-green-600 font-medium">Free</span>
           {% else %}
-            <span>$5.00</span>
+            <span>₹{{ shipping|default:"50.00" }}</span>
           {% endif %}
         </div>
         
@@ -111,26 +107,13 @@
         
         <div class="flex justify-between text-lg font-semibold">
           <span>Total</span>
-          {% if subtotal|default:0 > 50 %}
-            <span>${{ total|default:"0.00" }}</span>
-          {% else %}
-            <span>${{ total|add:5|default:"5.00" }}</span>
-          {% endif %}
+          <span>₹{{ total|default:"0.00" }}</span>
         </div>
         
-        <!-- Promo Code -->
-        <form class="flex gap-2 pt-2" x-data @submit.prevent="alert('Promo codes are disabled in this demo')">
-          <input type="text" placeholder="Promo code" class="flex h-10 w-full rounded-full border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-          <button type="submit" class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
-            Apply
-          </button>
-        </form>
-        
         <!-- Checkout -->
-        <a href="{% url 'checkout' %}" class="inline-flex w-full h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
-          <i data-lucide="lock" class="mr-2 h-4 w-4"></i> Checkout
+        <a href="{% url 'checkout' %}" class="inline-flex w-full h-11 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 mt-2">
+          <i data-lucide="lock" class="mr-2 h-4 w-4"></i> Proceed to Checkout
         </a>
-        <p class="text-center text-xs text-muted-foreground">Demo storefront &mdash; no payment is taken.</p>
       </aside>
       
     </div>

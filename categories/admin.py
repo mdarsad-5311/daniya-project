@@ -10,9 +10,14 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('name',)
 
+    def get_queryset(self, request):
+        from django.db.models import Count
+        return super().get_queryset(request).annotate(_product_count=Count('products'))
+
     def product_count(self, obj):
-        return obj.products.count()
+        return getattr(obj, '_product_count', obj.products.count())
     product_count.short_description = "Products"
+    product_count.admin_order_field = '_product_count'
 
     def image_preview(self, obj):
         if obj.image:

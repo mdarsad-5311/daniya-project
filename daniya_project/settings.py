@@ -31,7 +31,7 @@ if not SECRET_KEY:
     raise ImproperlyConfigured('SECRET_KEY must be set in the environment.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
 # Configure ALLOWED_HOSTS for PythonAnywhere production.
 # Replace 'YOUR_PYTHONANYWHERE_USERNAME' with your actual PythonAnywhere username.
@@ -50,6 +50,11 @@ if os.environ.get('ALLOWED_HOSTS'):
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host}" for host in ALLOWED_HOSTS if host
 ]
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS.extend([
+        origin.strip() for origin in os.environ.get('CSRF_TRUSTED_ORIGINS').split(',') if origin.strip()
+    ])
+
 
 
 # Application definition
@@ -110,6 +115,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+            'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;',
+        },
     }
 }
 
@@ -195,14 +204,53 @@ RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
 
 if not DEBUG:
     # In production (e.g. on PythonAnywhere via WSGI), enable full HTTPS security.
-    # When testing locally via 'runserver', allow plain HTTP on 127.0.0.1.
-    _is_devserver = 'runserver' in sys.argv
-    SECURE_SSL_REDIRECT = not _is_devserver
-    CSRF_COOKIE_SECURE = not _is_devserver
-    SESSION_COOKIE_SECURE = not _is_devserver
+    # When testing locally via 'runserver' or running test suites, allow plain HTTP.
+    _is_dev_or_test = any(arg in sys.argv for arg in ('runserver', 'test'))
+    SECURE_SSL_REDIRECT = not _is_dev_or_test
+    CSRF_COOKIE_SECURE = not _is_dev_or_test
+    SESSION_COOKIE_SECURE = not _is_dev_or_test
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': LOGS_DIR / 'django.log',
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+

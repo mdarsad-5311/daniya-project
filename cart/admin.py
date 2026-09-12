@@ -10,7 +10,7 @@ class CartItemInline(admin.TabularInline):
 
     def item_total(self, obj):
         if obj.pk:
-            return f"${obj.total_price:.2f}"
+            return f"₹{obj.total_price:.2f}"
         return "-"
     item_total.short_description = "Subtotal"
 
@@ -25,13 +25,16 @@ class CartAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'total_price')
     inlines = [CartItemInline]
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user').prefetch_related('items__product')
+
     def items_count(self, obj):
         return sum(item.quantity for item in obj.items.all())
     items_count.short_description = "Total Items"
 
     def total_price(self, obj):
         total = sum(item.total_price for item in obj.items.all())
-        return f"${total:.2f}"
+        return f"₹{total:.2f}"
     total_price.short_description = "Cart Total"
 
 
@@ -41,7 +44,9 @@ class CartItemAdmin(admin.ModelAdmin):
     search_fields = ('product__name', 'cart__id')
     readonly_fields = ('cart', 'product', 'quantity', 'item_total')
 
-    def item_total(self, obj):
-        return f"${obj.total_price:.2f}"
-    item_total.short_description = "Subtotal"
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('cart', 'cart__user', 'product')
 
+    def item_total(self, obj):
+        return f"₹{obj.total_price:.2f}"
+    item_total.short_description = "Subtotal"

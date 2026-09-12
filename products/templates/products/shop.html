@@ -51,17 +51,17 @@
         </div>
 
         <!-- Max Price -->
-        <div class="space-y-3" x-data="{ price: {{ request.GET.max_price|default:60 }} }">
+        <div class="space-y-3" x-data="{ price: {{ request.GET.max_price|default:2000 }} }">
           <h3 class="text-sm font-semibold uppercase tracking-widest">Max price</h3>
           <div class="flex items-center gap-4">
-            <input type="range" id="max-price-range" name="max_price" min="10" max="60" step="1" 
-                   value="{{ request.GET.max_price|default:60 }}"
+            <input type="range" id="max-price-range" name="max_price" min="100" max="2000" step="50" 
+                   value="{{ request.GET.max_price|default:2000 }}"
                    class="w-full"
                    style="accent-color:#486551; background: linear-gradient(to right, #486551 100%, #D1C4B0 100%); height:4px; border-radius:4px; outline:none; cursor:pointer;"
                    x-model="price"
                    hx-trigger="change, mouseup">
           </div>
-          <p class="text-sm text-muted-foreground">Up to $<span x-text="price">{{ request.GET.max_price|default:60 }}</span></p>
+          <p class="text-sm text-muted-foreground">Up to ₹<span x-text="price">{{ request.GET.max_price|default:2000 }}</span></p>
         </div>
 
         <!-- Rating -->

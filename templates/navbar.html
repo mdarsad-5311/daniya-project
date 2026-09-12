@@ -81,12 +81,10 @@
         class="relative inline-flex items-center justify-center rounded-full p-2 hover:bg-muted text-foreground transition-colors"
         @click="cartOpen = true">
         <i data-lucide="shopping-bag" class="h-5 w-5" stroke-width="1.6"></i>
-        {% if cart_count and cart_count > 0 %}
-        <span
+        <span id="nav-cart-count"
           class="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.6rem] font-semibold text-primary-foreground">
-          {{ cart_count }}
+          {{ cart_count|default:"0" }}
         </span>
-        {% endif %}
       </button>
 
       <!-- Mobile Menu Toggle -->

@@ -66,9 +66,9 @@
     </div>
     
     <div class="mt-1 flex items-baseline gap-2">
-      <span class="text-lg font-semibold">${{ product.price }}</span>
+      <span class="text-lg font-semibold">₹{{ product.price }}</span>
       {% if product.original_price %}
-        <span class="text-sm text-muted-foreground line-through">${{ product.original_price }}</span>
+        <span class="text-sm text-muted-foreground line-through">₹{{ product.original_price }}</span>
       {% endif %}
     </div>
     
@@ -130,7 +130,7 @@
                 <i data-lucide="star" class="h-4 w-4 fill-current"></i>
                 <span class="text-xs text-muted-foreground ml-1">12 reviews</span>
               </div>
-              <p class="text-2xl font-semibold">${{ product.price }}</p>
+              <p class="text-2xl font-semibold">₹{{ product.price }}</p>
               
               <ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4 mt-2">
                 <li>100% natural ingredients</li>

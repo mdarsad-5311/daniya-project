@@ -1,30 +1,102 @@
-{% extends 'base.html' %}
-
-{% block title %}Server Error - Daania{% endblock %}
-
-{% block content %}
-<div class="flex min-h-[70vh] items-center justify-center bg-background px-4">
-  <div class="max-w-md text-center">
-    <h1 class="font-display text-2xl font-semibold tracking-tight text-foreground">
-      This page didn't load
-    </h1>
-    <p class="mt-2 text-sm text-muted-foreground">
-      Something went wrong on our end. You can try refreshing or head back home.
-    </p>
-    <div class="mt-6 flex flex-wrap justify-center gap-2">
-      <a
-        href="{{ request.path }}"
-        class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        Try again
-      </a>
-      <a
-        href="{% url 'home' %}"
-        class="inline-flex h-10 items-center justify-center rounded-full border border-input bg-background px-8 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-      >
-        Go home
-      </a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 - Server Error | Daania</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f9f0e3;
+      color: #1a1a24;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid rgba(180, 200, 185, 0.5);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      max-width: 28rem;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(72, 101, 81, 0.1);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 9999px;
+      background-color: #eef2ee;
+      color: #486551;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a24;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #6b7280;
+      font-size: 0.925rem;
+      line-height: 1.5;
+      margin-bottom: 1.75rem;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    @media (min-width: 480px) {
+      .btn-group { flex-direction: row; justify-content: center; }
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1.5rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background-color: #486551;
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: #3b5343;
+    }
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid rgba(180, 200, 185, 0.8);
+      color: #1a1a24;
+    }
+    .btn-secondary:hover {
+      background-color: #eef2ee;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">500</div>
+    <h1>Internal Server Error</h1>
+    <p>Something unexpected occurred on our end. Our team has been alerted and is working to resolve it.</p>
+    <div class="btn-group">
+      <a href="javascript:location.reload()" class="btn btn-primary">Try Again</a>
+      <a href="/" class="btn btn-secondary">Return Home</a>
     </div>
   </div>
-</div>
-{% endblock %}
+</body>
+</html>
+

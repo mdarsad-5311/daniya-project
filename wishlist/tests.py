@@ -19,8 +19,26 @@ def get_test_image():
     return SimpleUploadedFile('test.jpg', file.read(), content_type='image/jpeg')
 
 
+import shutil
+import tempfile
+from django.test import override_settings
+
+
 class WishlistSetupMixin:
     """Shared setUp for wishlist tests."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._temp_media = tempfile.mkdtemp()
+        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._override.disable()
+        shutil.rmtree(cls._temp_media, ignore_errors=True)
+        super().tearDownClass()
 
     def setUp(self):
         self.client = Client()

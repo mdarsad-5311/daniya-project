@@ -1,8 +1,6 @@
 from django.contrib import admin
-
 from django.utils.html import format_html
-
-from .models import Product, Review
+from .models import Product, Review, ContactMessage
 
 
 @admin.register(Review)
@@ -10,6 +8,9 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
     list_filter = ('rating', 'created_at')
     search_fields = ('product__name', 'user__username', 'comment')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('product', 'user')
 
 
 @admin.register(Product)
@@ -20,12 +21,14 @@ class ProductAdmin(admin.ModelAdmin):
         'category',
         'price',
         'original_price',
+        'stock',
+        'is_active',
         'best_seller',
         'slug',
         'created_at',
     )
-    list_editable = ('price', 'original_price', 'best_seller')
-    list_filter = ('category', 'best_seller', 'created_at')
+    list_editable = ('price', 'original_price', 'stock', 'is_active', 'best_seller')
+    list_filter = ('category', 'is_active', 'best_seller', 'created_at')
     search_fields = ('name', 'description', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('created_at', 'updated_at', 'image_preview_large')
@@ -35,8 +38,8 @@ class ProductAdmin(admin.ModelAdmin):
         ('Basic Information', {
             'fields': ('name', 'slug', 'category', 'description')
         }),
-        ('Pricing', {
-            'fields': ('price', 'original_price')
+        ('Pricing & Inventory', {
+            'fields': ('price', 'original_price', 'stock', 'is_active')
         }),
         ('Media', {
             'fields': ('image', 'image_preview_large')
@@ -45,6 +48,9 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('best_seller', 'created_at', 'updated_at')
         }),
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('category')
 
     def image_preview(self, obj):
         if obj.image:
@@ -66,3 +72,11 @@ class ProductAdmin(admin.ModelAdmin):
         return "No image uploaded"
     image_preview_large.short_description = "Current Image Preview"
 
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('name', 'email', 'subject', 'message')
+    readonly_fields = ('name', 'email', 'subject', 'message', 'created_at')
+    ordering = ('-created_at',)

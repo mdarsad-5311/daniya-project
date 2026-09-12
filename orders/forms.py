@@ -11,16 +11,22 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['first_name', 'last_name', 'email', 'address', 'city', 'postal_code']
+        fields = ['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postal_code']
         labels = {
             'first_name': 'First name',
             'last_name': 'Last name',
             'email': 'Email address',
+            'phone': 'Phone number',
             'address': 'Shipping address',
             'city': 'City',
             'postal_code': 'Postal / ZIP code',
         }
         widgets = {
+            'phone': forms.TextInput(attrs={
+                'placeholder': '9876543210',
+                'class': 'checkout-input',
+                'autocomplete': 'tel',
+            }),
             'first_name': forms.TextInput(attrs={
                 'placeholder': 'Jane',
                 'class': 'checkout-input',

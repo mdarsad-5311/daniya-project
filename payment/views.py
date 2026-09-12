@@ -121,6 +121,12 @@ def verify_payment_view(request, order_id):
                 'payment_status', 'paid', 'status', 'razorpay_payment_id',
                 'razorpay_signature', 'updated_at',
             ])
+            # Decrement inventory
+            for item in order.items.select_related('product'):
+                if item.product.stock is not None:
+                    item.product.stock = max(0, item.product.stock - item.quantity)
+                    item.product.save(update_fields=['stock'])
+
             cart = Cart.objects.filter(user=request.user).first()
             if cart:
                 cart.items.all().delete()
@@ -166,7 +172,15 @@ def webhook_view(request):
         if payment_entity.get('id'):
             order.razorpay_payment_id = payment_entity['id']
         order.save(update_fields=['payment_status', 'paid', 'status', 'razorpay_payment_id', 'updated_at'])
-        cart = Cart.objects.filter(user=order.user).first()
-        if cart:
-            cart.items.all().delete()
-    return JsonResponse({'status': 'paid'})
+
+        # Decrement inventory
+        for item in order.items.select_related('product'):
+            if item.product.stock is not None:
+                item.product.stock = max(0, item.product.stock - item.quantity)
+                item.product.save(update_fields=['stock'])
+
+        if order.user:
+            cart = Cart.objects.filter(user=order.user).first()
+            if cart:
+                cart.items.all().delete()
+    return JsonResponse({'status': 'paid'})

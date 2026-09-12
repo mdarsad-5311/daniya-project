@@ -53,6 +53,7 @@ class PaymentFlowTests(TestCase):
             'first_name': 'Test',
             'last_name': 'Buyer',
             'email': 'buyer@example.com',
+            'phone': '9876543210',
             'address': '1 Test Street',
             'city': 'Mumbai',
             'postal_code': '400001',
@@ -74,13 +75,14 @@ class PaymentFlowTests(TestCase):
         self.assertEqual(order.payment_status, 'pending')
         self.assertFalse(order.paid)
         self.assertEqual(self.cart.items.count(), 1)
-        self.assertEqual(order.get_total_cost(), Decimal('25.00'))
+        # Subtotal 25.00 + shipping 50.00 = 75.00
+        self.assertEqual(order.get_total_cost(), Decimal('75.00'))
 
     def test_razorpay_order_uses_server_total_in_paise(self):
         order = self.create_pending_order()
 
         self.razorpay_client.order.create.assert_called_once_with(data={
-            'amount': 2500,
+            'amount': 7500,
             'currency': 'INR',
             'receipt': f'order_{order.id}',
             'notes': {'django_order_id': str(order.id)},
@@ -298,6 +300,7 @@ class EndToEndIntegrationTests(TestCase):
             'first_name': 'E2E',
             'last_name': 'Tester',
             'email': 'e2e@example.com',
+            'phone': '9876543210',
             'address': '42 Discovery Way',
             'city': 'Islamabad',
             'postal_code': '44000',
@@ -316,7 +319,8 @@ class EndToEndIntegrationTests(TestCase):
         self.assertEqual(order_item.product, self.product)
         self.assertEqual(order_item.quantity, 2)
         self.assertEqual(order_item.price, Decimal('45.00'))
-        self.assertEqual(order.get_total_cost(), Decimal('90.00'))
+        # Subtotal 90.00 + shipping 50.00 = 140.00
+        self.assertEqual(order.get_total_cost(), Decimal('140.00'))
 
         # Cart still holds items pending successful payment
         self.assertEqual(cart.items.count(), 1)

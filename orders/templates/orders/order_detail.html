@@ -61,9 +61,9 @@
             <a href="{% url 'product_detail' item.product.slug %}" class="text-sm font-semibold truncate block transition-soft hover:text-primary">
               {{ item.product.name }}
             </a>
-            <p class="text-xs text-muted-foreground">Qty: {{ item.quantity }} × ${{ item.price }}</p>
+            <p class="text-xs text-muted-foreground">Qty: {{ item.quantity }} × ₹{{ item.price }}</p>
           </div>
-          <span class="text-sm font-semibold whitespace-nowrap">${{ item.get_cost }}</span>
+          <span class="text-sm font-semibold whitespace-nowrap">₹{{ item.get_cost }}</span>
         </div>
       {% endfor %}
     </div>
@@ -74,7 +74,11 @@
     <div class="space-y-2">
       <div class="flex justify-between text-sm">
         <span class="text-muted-foreground">Subtotal</span>
-        <span>${{ order.get_total_cost }}</span>
+        <span>₹{{ order.get_subtotal }}</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-muted-foreground">Shipping</span>
+        <span>{% if order.shipping_cost > 0 %}₹{{ order.shipping_cost }}{% else %}<span class="text-green-600 font-medium">Free</span>{% endif %}</span>
       </div>
       <div class="flex justify-between text-sm">
         <span class="text-muted-foreground">Paid</span>
@@ -87,7 +91,7 @@
       <hr class="border-border">
       <div class="flex justify-between text-lg font-semibold">
         <span>Total</span>
-        <span>${{ order.get_total_cost }}</span>
+        <span>₹{{ order.get_total_cost }}</span>
       </div>
     </div>
   </div>

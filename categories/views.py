@@ -3,15 +3,8 @@ from .models import Category
 from products.models import Product
 
 def category_detail_view(request, slug):
-    # Try to fetch the category from DB if it exists
-    category = None
-    products = []
-    try:
-        category = Category.objects.get(slug=slug)
-        products = category.products.all()
-    except Category.DoesNotExist:
-        # For the demo if the DB is empty, just pass the slug
-        pass
+    category = get_object_or_404(Category, slug=slug)
+    products = category.products.filter(is_active=True)
 
     context = {
         'category': category,
@@ -19,3 +12,4 @@ def category_detail_view(request, slug):
         'products': products,
     }
     return render(request, 'categories/category_detail.html', context)
+

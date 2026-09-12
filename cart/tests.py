@@ -58,7 +58,8 @@ class CartWorkflowTests(TestCase):
         self.assertContains(response, 'Hydrating Cleanser')
         self.assertEqual(response.context['cart_count'], 2)
         self.assertEqual(response.context['subtotal'], Decimal('40.00'))
-        self.assertEqual(response.context['total'], Decimal('40.00'))
+        self.assertEqual(response.context['shipping'], Decimal('50.00'))
+        self.assertEqual(response.context['total'], Decimal('90.00'))
 
     def test_guest_increase_quantity_via_add_or_update(self):
         # Adding same item increments quantity
@@ -76,9 +77,11 @@ class CartWorkflowTests(TestCase):
         item.refresh_from_db()
         self.assertEqual(item.quantity, 5)
 
-        # Verify cart total updated: 5 * 20.00 = 100.00
+        # Verify cart total updated: 5 * 20.00 = 100.00 + 50.00 shipping = 150.00
         view_response = self.client.get(reverse('cart'))
-        self.assertEqual(view_response.context['total'], Decimal('100.00'))
+        self.assertEqual(view_response.context['subtotal'], Decimal('100.00'))
+        self.assertEqual(view_response.context['shipping'], Decimal('50.00'))
+        self.assertEqual(view_response.context['total'], Decimal('150.00'))
 
     def test_guest_decrease_quantity(self):
         self.client.post(reverse('add_to_cart', args=[self.product1.id]), {'qty': 3})
@@ -115,9 +118,9 @@ class CartWorkflowTests(TestCase):
         self.assertFalse(CartItem.objects.filter(id=item.id).exists())
 
     def test_cart_total_with_multiple_products_and_quantities(self):
-        # Add 2 of product1 ($20.00) = $40.00
+        # Add 2 of product1 (20.00) = 40.00
         self.client.post(reverse('add_to_cart', args=[self.product1.id]), {'qty': 2})
-        # Add 3 of product2 ($35.50) = $106.50
+        # Add 3 of product2 (35.50) = 106.50
         self.client.post(reverse('add_to_cart', args=[self.product2.id]), {'qty': 3})
 
         session_key = self.client.session.session_key
@@ -125,10 +128,23 @@ class CartWorkflowTests(TestCase):
         self.assertEqual(cart.items.count(), 2)
 
         response = self.client.get(reverse('cart'))
-        expected_total = (Decimal('20.00') * 2) + (Decimal('35.50') * 3)  # 40.00 + 106.50 = 146.50
-        self.assertEqual(response.context['subtotal'], expected_total)
-        self.assertEqual(response.context['total'], expected_total)
+        expected_subtotal = (Decimal('20.00') * 2) + (Decimal('35.50') * 3)  # 40.00 + 106.50 = 146.50
+        self.assertEqual(response.context['subtotal'], expected_subtotal)
+        self.assertEqual(response.context['shipping'], Decimal('50.00'))
+        self.assertEqual(response.context['total'], expected_subtotal + Decimal('50.00'))
         self.assertEqual(response.context['cart_count'], 5)
+
+    def test_free_shipping_threshold(self):
+        expensive_product = Product.objects.create(
+            category=self.category,
+            name='Luxury Set',
+            price=Decimal('600.00'),
+        )
+        self.client.post(reverse('add_to_cart', args=[expensive_product.id]), {'qty': 1})
+        response = self.client.get(reverse('cart'))
+        self.assertEqual(response.context['subtotal'], Decimal('600.00'))
+        self.assertEqual(response.context['shipping'], Decimal('0.00'))
+        self.assertEqual(response.context['total'], Decimal('600.00'))
 
     # ---------------------------------------------------------
     # Logged-in cart tests (User-based)
@@ -152,7 +168,9 @@ class CartWorkflowTests(TestCase):
         view_res = self.client.get(reverse('cart'))
         self.assertEqual(view_res.status_code, 200)
         self.assertEqual(view_res.context['cart_count'], 2)
-        self.assertEqual(view_res.context['total'], Decimal('40.00'))
+        self.assertEqual(view_res.context['subtotal'], Decimal('40.00'))
+        self.assertEqual(view_res.context['shipping'], Decimal('50.00'))
+        self.assertEqual(view_res.context['total'], Decimal('90.00'))
 
         # Increase quantity
         self.client.post(reverse('update_cart', args=[item.id]), {'quantity': 4})
@@ -168,6 +186,21 @@ class CartWorkflowTests(TestCase):
         # Remove item
         self.client.post(reverse('remove_from_cart', args=[item.id]))
         self.assertEqual(cart.items.count(), 0)
+
+    def test_guest_cart_merges_into_user_cart_on_login(self):
+        # Guest adds product1
+        self.client.post(reverse('add_to_cart', args=[self.product1.id]), {'qty': 2})
+        # User already has cart with product2
+        user_cart = Cart.objects.create(user=self.user)
+        CartItem.objects.create(cart=user_cart, product=self.product2, quantity=1)
+
+        # Login view executes login(request, user) which triggers user_logged_in signal
+        self.client.post(reverse('login'), {'username': 'cartuser', 'password': 'Password123!'})
+
+        user_cart.refresh_from_db()
+        self.assertEqual(user_cart.items.count(), 2)
+        self.assertEqual(user_cart.items.get(product=self.product1).quantity, 2)
+        self.assertEqual(user_cart.items.get(product=self.product2).quantity, 1)
 
     def test_cart_item_isolation_between_users(self):
         other_user = User.objects.create_user(
@@ -188,3 +221,4 @@ class CartWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 404)
         other_item.refresh_from_db()
         self.assertEqual(other_item.quantity, 2)
+

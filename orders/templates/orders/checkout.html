@@ -56,16 +56,28 @@
           </div>
         </div>
 
-        <!-- Email -->
-        <div class="mt-4 space-y-1.5">
-          <label for="id_email" class="text-sm font-medium">{{ form.email.label }}</label>
-          <input type="email" id="id_email" name="email"
-            value="{{ form.email.value|default_if_none:'' }}"
-            placeholder="jane@example.com" autocomplete="email" required
-            class="flex h-11 w-full rounded-2xl border {% if form.email.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
-          {% if form.email.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>
-          {% endif %}
+        <!-- Email & Phone row -->
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label for="id_email" class="text-sm font-medium">{{ form.email.label }}</label>
+            <input type="email" id="id_email" name="email"
+              value="{{ form.email.value|default_if_none:'' }}"
+              placeholder="jane@example.com" autocomplete="email" required
+              class="flex h-11 w-full rounded-2xl border {% if form.email.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.email.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div class="space-y-1.5">
+            <label for="id_phone" class="text-sm font-medium">{{ form.phone.label }}</label>
+            <input type="tel" id="id_phone" name="phone"
+              value="{{ form.phone.value|default_if_none:'' }}"
+              placeholder="9876543210" autocomplete="tel" required
+              class="flex h-11 w-full rounded-2xl border {% if form.phone.errors %}border-red-400{% else %}border-border{% endif %} bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all" />
+            {% if form.phone.errors %}
+              <p class="text-xs text-red-500 mt-1">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+          </div>
         </div>
 
         <!-- Address -->
@@ -143,10 +155,10 @@
       </div>
       <div class="flex justify-between text-sm">
         <span class="text-muted-foreground">Shipping</span>
-        {% if subtotal > 50 %}
-          <span>Free</span>
+        {% if shipping == 0 or shipping == 0.00 %}
+          <span class="text-green-600 font-medium">Free</span>
         {% else %}
-          <span>₹0.00</span>
+          <span>₹{{ shipping }}</span>
         {% endif %}
       </div>
 

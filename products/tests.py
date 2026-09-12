@@ -151,3 +151,44 @@ class ProductModelAndDetailTests(TestCase):
 		self.assertIn(prod1, products_in_context)
 		self.assertNotIn(prod2, products_in_context)
 
+	def test_inactive_product_hidden_from_shop(self):
+		inactive_product = Product.objects.create(
+			category=self.category_skincare,
+			name='Archived Cream',
+			price=Decimal('10.00'),
+			is_active=False,
+		)
+		shop_response = self.client.get(reverse('shop'))
+		self.assertNotIn(inactive_product, shop_response.context['products'])
+
+
+from django.core.exceptions import ValidationError
+from .models import ContactMessage
+from .forms import ReviewForm, ContactForm
+
+
+class ContactAndValidationTests(TestCase):
+	def test_review_rating_validation(self):
+		form = ReviewForm(data={'rating': 6, 'comment': 'Invalid'})
+		self.assertFalse(form.is_valid())
+		self.assertIn('rating', form.errors)
+
+		valid_form = ReviewForm(data={'rating': 4, 'comment': 'Valid'})
+		self.assertTrue(valid_form.is_valid())
+
+	def test_contact_form_submission_persists_message(self):
+		payload = {
+			'name': 'Test Customer',
+			'email': 'customer@example.com',
+			'subject': 'Order Inquiry',
+			'message': 'Hello, I have a question about my order.',
+		}
+		response = self.client.post(reverse('contact'), payload, follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(ContactMessage.objects.filter(email='customer@example.com').exists())
+		msg = ContactMessage.objects.get(email='customer@example.com')
+		self.assertEqual(msg.name, 'Test Customer')
+		self.assertEqual(msg.subject, 'Order Inquiry')
+		self.assertContains(response, 'Thank you! Your message has been sent successfully.')
+
+

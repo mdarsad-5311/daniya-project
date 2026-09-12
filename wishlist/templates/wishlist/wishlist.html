@@ -91,9 +91,9 @@
 
         <!-- Pricing -->
         <div class="flex items-baseline gap-2">
-          <span class="text-lg font-semibold">${{ item.product.price }}</span>
+          <span class="text-lg font-semibold">₹{{ item.product.price }}</span>
           {% if item.product.original_price %}
-          <span class="text-sm text-muted-foreground line-through">${{ item.product.original_price }}</span>
+          <span class="text-sm text-muted-foreground line-through">₹{{ item.product.original_price }}</span>
           {% endif %}
         </div>
 

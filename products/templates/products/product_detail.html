@@ -63,9 +63,9 @@
       </div>
       
       <div class="flex items-baseline gap-3">
-        <span class="text-3xl font-semibold">${{ product.price }}</span>
+        <span class="text-3xl font-semibold">₹{{ product.price }}</span>
         {% if product.original_price %}
-          <span class="text-lg text-muted-foreground line-through">${{ product.original_price }}</span>
+          <span class="text-lg text-muted-foreground line-through">₹{{ product.original_price }}</span>
         {% endif %}
       </div>
       
@@ -124,7 +124,7 @@
 
 
       <div class="flex items-center gap-2 text-sm text-muted-foreground">
-        <i data-lucide="truck" class="h-4 w-4" stroke-width="1.6"></i> Free shipping on orders over $50
+        <i data-lucide="truck" class="h-4 w-4" stroke-width="1.6"></i> Free shipping on orders over ₹500
       </div>
 
       <hr class="border-border">

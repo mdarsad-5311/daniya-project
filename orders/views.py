@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.db import transaction
 from .models import Order, OrderItem
 from .forms import OrderForm
 from cart.models import Cart, CartItem
+from cart.utils import calculate_shipping
 
 
 # ---------------------------------------------------------------------------
@@ -30,6 +32,34 @@ def _get_user_cart(request):
     return cart, cart_items
 
 
+def _matches_pending_order(pending_order, cleaned_data, fresh_items, shipping, total):
+    """
+    Verify if an existing pending order matches the current checkout state.
+    Returns True only if shipping details, items, quantities, and totals match exactly.
+    """
+    for field in ('first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postal_code'):
+        if getattr(pending_order, field, '') != cleaned_data.get(field, ''):
+            return False
+
+    if pending_order.shipping_cost != shipping or pending_order.total_amount != total:
+        return False
+
+    order_items = list(pending_order.items.order_by('product_id'))
+    if len(order_items) != len(fresh_items):
+        return False
+
+    fresh_sorted = sorted(fresh_items, key=lambda x: x.product_id)
+    for o_item, c_item in zip(order_items, fresh_sorted):
+        if (
+            o_item.product_id != c_item.product_id
+            or o_item.quantity != c_item.quantity
+            or o_item.price != c_item.product.price
+        ):
+            return False
+
+    return True
+
+
 # ---------------------------------------------------------------------------
 # View: checkout
 # ---------------------------------------------------------------------------
@@ -45,7 +75,8 @@ def checkout_view(request):
 
     # Pre-compute totals server-side
     subtotal = sum(item.total_price for item in cart_items)
-    total = subtotal
+    shipping = calculate_shipping(subtotal)
+    total = subtotal + shipping
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -60,7 +91,16 @@ def checkout_view(request):
                 messages.info(request, 'Your bag is empty — add something before checking out.')
                 return redirect('cart')
 
-            # Reuse an unfinished order if the browser retries the checkout POST.
+            # Enforce stock check
+            for item in fresh_items:
+                if not item.product.is_active or (item.product.stock is not None and item.product.stock < item.quantity):
+                    messages.error(
+                        request,
+                        f'"{item.product.name}" only has {item.product.stock or 0} in stock. Please update your bag.'
+                    )
+                    return redirect('cart')
+
+            # Check if pending order can be safely reused
             pending_order_id = request.session.get('pending_order_id')
             if pending_order_id:
                 pending_order = Order.objects.filter(
@@ -69,14 +109,19 @@ def checkout_view(request):
                     paid=False,
                     payment_status__in=('pending', 'failed'),
                 ).first()
-                if pending_order:
-                    return redirect('payment:create', order_id=pending_order.id)
 
-            # Create the order and snapshot its items. The cart remains intact
-            # until the payment endpoint verifies Razorpay's signature.
+                if pending_order and _matches_pending_order(pending_order, form.cleaned_data, fresh_items, shipping, total):
+                    return redirect('payment:create', order_id=pending_order.id)
+                else:
+                    # Invalidate stale pending order reference
+                    request.session.pop('pending_order_id', None)
+
+            # Create the order and snapshot its items.
             with transaction.atomic():
                 order = form.save(commit=False)
                 order.user = request.user
+                order.shipping_cost = shipping
+                order.total_amount = total
                 order.paid = False
                 order.payment_status = 'pending'
                 order.status = 'Pending'
@@ -86,6 +131,7 @@ def checkout_view(request):
                     OrderItem.objects.create(
                         order=order,
                         product=item.product,
+                        product_name=item.product.name,
                         price=item.product.price,   # snapshot current price
                         quantity=item.quantity,
                     )
@@ -108,6 +154,7 @@ def checkout_view(request):
         'form': form,
         'cart_items': cart_items,
         'subtotal': subtotal,
+        'shipping': shipping,
         'total': total,
     }
     return render(request, 'orders/checkout.html', context)

@@ -8,9 +8,8 @@
     <meta name="color-scheme" content="light">
     <title>{% block title %}Daania{% endblock %}</title>
     
-    <!-- Tailwind CSS v4 Browser CDN -->
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/tailwindcss">
+    <!-- Compiled Tailwind CSS (Production AOT) -->
+    <link href="{% static 'css/dist.css' %}" rel="stylesheet">
 
 
     <!-- Google Fonts (Updated to Lovable Style) -->

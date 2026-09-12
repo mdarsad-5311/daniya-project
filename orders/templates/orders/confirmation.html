@@ -78,15 +78,11 @@
     <div class="space-y-2">
       <div class="flex justify-between text-sm">
         <span class="text-muted-foreground">Subtotal</span>
-        <span>₹{{ order.get_total_cost }}</span>
+        <span>₹{{ order.get_subtotal }}</span>
       </div>
       <div class="flex justify-between text-sm">
         <span class="text-muted-foreground">Shipping</span>
-        {% if order.get_total_cost > 50 %}
-          <span>Free</span>
-        {% else %}
-          <span>₹0.00</span>
-        {% endif %}
+        <span>{% if order.shipping_cost > 0 %}₹{{ order.shipping_cost }}{% else %}<span class="text-green-600 font-medium">Free</span>{% endif %}</span>
       </div>
       <hr class="border-border">
       <div class="flex justify-between text-lg font-semibold">

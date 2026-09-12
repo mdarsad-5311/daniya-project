@@ -55,6 +55,12 @@
         </div>
       {% endif %}
 
+      <div class="flex items-center justify-end">
+        <a href="{% url 'password_reset' %}" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">
+          Forgot password?
+        </a>
+      </div>
+
       <button type="submit"
         class="mt-2 inline-flex h-11 w-full items-center justify-center rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style="background-color:#486551;">

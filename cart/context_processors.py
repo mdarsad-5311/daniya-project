@@ -1,5 +1,6 @@
 from decimal import Decimal
 from .models import Cart, CartItem
+from .utils import calculate_shipping
 
 
 def cart_context(request):
@@ -10,8 +11,9 @@ def cart_context(request):
         cart_items      — queryset of CartItem (product + category pre-fetched)
         cart_count      — total quantity of all items (sum of quantities)
         cart_subtotal   — Decimal subtotal
-        cart_total      — Decimal total (Phase 2: equals subtotal)
-        cart_discount   — Decimal discount (Phase 2: always 0.00)
+        cart_shipping   — Decimal shipping (calculated on server)
+        cart_total      — Decimal total (subtotal + shipping)
+        cart_discount   — Decimal discount
     """
     try:
         if request.user.is_authenticated:
@@ -36,13 +38,15 @@ def cart_context(request):
         )
 
         subtotal = sum(item.total_price for item in cart_items)
-        total = subtotal
+        shipping = calculate_shipping(subtotal)
+        total = subtotal + shipping
         count = sum(item.quantity for item in cart_items)
 
         return {
             'cart_items': cart_items,
             'cart_count': count,
             'cart_subtotal': subtotal,
+            'cart_shipping': shipping,
             'cart_total': total,
             'cart_discount': Decimal('0.00'),
         }
@@ -57,6 +61,8 @@ def _empty_context():
         'cart_items': [],
         'cart_count': 0,
         'cart_subtotal': Decimal('0.00'),
+        'cart_shipping': Decimal('0.00'),
         'cart_total': Decimal('0.00'),
         'cart_discount': Decimal('0.00'),
     }
+

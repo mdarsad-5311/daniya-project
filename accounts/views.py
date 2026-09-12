@@ -74,12 +74,26 @@ def profile_view(request):
     )
     return render(request, 'accounts/profile.html', {'orders': orders})
 
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from .models import NewsletterSubscriber
 
 def subscribe_newsletter(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = (request.POST.get('email') or '').strip()
         if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                return HttpResponse(
+                    '<div class="rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm font-medium flex items-center justify-center gap-1.5 h-11">'
+                    'Please enter a valid email address.</div>',
+                    status=400
+                )
             NewsletterSubscriber.objects.get_or_create(email=email)
-            return HttpResponse('<div class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow flex items-center justify-center gap-1.5 h-11"><i data-lucide="check" class="h-4 w-4"></i> Thanks for subscribing!</div>')
-    return HttpResponse('Invalid request')
+            return HttpResponse(
+                '<div class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow flex items-center justify-center gap-1.5 h-11">'
+                '<i data-lucide="check" class="h-4 w-4"></i> Thanks for subscribing!</div>'
+            )
+    return HttpResponse('Invalid request', status=400)
+

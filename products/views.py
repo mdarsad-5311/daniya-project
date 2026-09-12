@@ -1,13 +1,13 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .models import Product, Category
-from .forms import ReviewForm
+from .forms import ReviewForm, ContactForm
 
 def home_view(request):
-    # Fetch real products if available, otherwise template uses hardcoded fallback
-    best_sellers = Product.objects.filter(best_seller=True)[:4]
+    best_sellers = Product.objects.filter(best_seller=True, is_active=True)[:4]
     categories = Category.objects.all()[:3]
     
     context = {
@@ -20,9 +20,16 @@ def about_view(request):
     return render(request, 'about.html')
 
 def contact_view(request):
-    return render(request, 'contact.html')
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Thank you! Your message has been sent successfully.')
+            return redirect('contact')
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
 
-from django.shortcuts import get_object_or_404
 from .models import Product
 
 def product_detail_view(request, slug):
@@ -80,7 +87,7 @@ from categories.models import Category
 from django.db.models import Q
 
 def shop_view(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True)
     all_categories = Category.objects.all()
     
     # Filtering Logic

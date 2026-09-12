@@ -15,12 +15,18 @@ __pycache__/
 .env
 .env.*
 !.env.example
+*.sqlite3
+db.sqlite3
 
 # Static & media files
 staticfiles/
 media/
 
+# Node modules
+node_modules/
+
 # Logs & test output
+logs/
 *.log
 .coverage
 coverage.xml
@@ -33,3 +39,4 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+

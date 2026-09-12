@@ -1,6 +1,8 @@
 import io
+import shutil
+import tempfile
 from PIL import Image
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -11,6 +13,21 @@ from accounts.models import NewsletterSubscriber
 from cart.models import Cart, CartItem
 
 
+class BaseTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._temp_media = tempfile.mkdtemp()
+        cls._settings_override = override_settings(MEDIA_ROOT=cls._temp_media)
+        cls._settings_override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._settings_override.disable()
+        shutil.rmtree(cls._temp_media, ignore_errors=True)
+        super().tearDownClass()
+
+
 def get_test_image():
     file = io.BytesIO()
     image = Image.new('RGB', (100, 100), color='green')
@@ -19,7 +36,7 @@ def get_test_image():
     return SimpleUploadedFile('test_img.jpg', file.read(), content_type='image/jpeg')
 
 
-class AdminSecurityTests(TestCase):
+class AdminSecurityTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.regular_user = User.objects.create_user(
@@ -62,7 +79,7 @@ class AdminSecurityTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class ProductsAdminTests(TestCase):
+class ProductsAdminTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.superuser = User.objects.create_superuser(
@@ -108,6 +125,8 @@ class ProductsAdminTests(TestCase):
             'description': 'Gentle glowing face cleanser',
             'price': '18.50',
             'original_price': '22.00',
+            'stock': '50',
+            'is_active': True,
             'best_seller': True,
             'image': test_img,
         }
@@ -128,7 +147,7 @@ class ProductsAdminTests(TestCase):
         self.assertFalse(Product.objects.filter(id=self.product.id).exists())
 
 
-class CategoriesAdminTests(TestCase):
+class CategoriesAdminTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.superuser = User.objects.create_superuser(
@@ -165,7 +184,7 @@ class CategoriesAdminTests(TestCase):
         self.assertTrue(Category.objects.filter(slug='hair-care').exists())
 
 
-class OrdersAdminTests(TestCase):
+class OrdersAdminTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.superuser = User.objects.create_superuser(
@@ -211,7 +230,7 @@ class OrdersAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'John Doe')
         self.assertContains(response, 'john@example.com')
-        self.assertContains(response, '$50.00')
+        self.assertContains(response, '₹50.00')
         self.assertContains(response, 'Pending')
 
     def test_order_change_view(self):
@@ -221,7 +240,7 @@ class OrdersAdminTests(TestCase):
         self.assertContains(response, 'Customer Information')
         self.assertContains(response, 'Shipping Address')
         self.assertContains(response, 'Moisturizer')
-        self.assertContains(response, '$50.00')
+        self.assertContains(response, '₹50.00')
 
     def test_order_status_update(self):
         data = {
@@ -251,10 +270,10 @@ class OrdersAdminTests(TestCase):
         response = self.client.get(reverse('admin:orders_orderitem_changelist'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Moisturizer')
-        self.assertContains(response, '$50.00')
+        self.assertContains(response, '₹50.00')
 
 
-class AccountsAdminTests(TestCase):
+class AccountsAdminTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.superuser = User.objects.create_superuser(
@@ -287,7 +306,7 @@ class AccountsAdminTests(TestCase):
         self.assertFalse(NewsletterSubscriber.objects.filter(id=self.subscriber.id).exists())
 
 
-class Phase3RegressionTests(TestCase):
+class Phase3RegressionTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.category = Category.objects.create(name='Face', slug='face')
@@ -332,7 +351,7 @@ class Phase3RegressionTests(TestCase):
 from decimal import Decimal
 
 
-class CheckoutWorkflowTests(TestCase):
+class CheckoutWorkflowTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -361,6 +380,7 @@ class CheckoutWorkflowTests(TestCase):
             'first_name': 'Jane',
             'last_name': 'Doe',
             'email': 'shopper@example.com',
+            'phone': '9876543210',
             'address': '123 Garden Avenue',
             'city': 'Lahore',
             'postal_code': '54000',
@@ -401,6 +421,7 @@ class CheckoutWorkflowTests(TestCase):
         self.assertEqual(order.first_name, 'Jane')
         self.assertEqual(order.last_name, 'Doe')
         self.assertEqual(order.email, 'shopper@example.com')
+        self.assertEqual(order.phone, '9876543210')
         self.assertEqual(order.address, '123 Garden Avenue')
         self.assertEqual(order.city, 'Lahore')
         self.assertEqual(order.postal_code, '54000')
@@ -408,23 +429,27 @@ class CheckoutWorkflowTests(TestCase):
         self.assertFalse(order.paid)
         self.assertEqual(order.status, 'Pending')
 
-        # Verify OrderItems snapshot product price and quantity
+        # Verify OrderItems snapshot product price, quantity and name
         order_items = order.items.order_by('id')
         self.assertEqual(order_items.count(), 2)
         item1 = order_items[0]
         self.assertEqual(item1.product, self.product1)
+        self.assertEqual(item1.product_name, self.product1.name)
         self.assertEqual(item1.price, Decimal('25.00'))
         self.assertEqual(item1.quantity, 2)
         self.assertEqual(item1.get_cost(), Decimal('50.00'))
 
         item2 = order_items[1]
         self.assertEqual(item2.product, self.product2)
+        self.assertEqual(item2.product_name, self.product2.name)
         self.assertEqual(item2.price, Decimal('15.50'))
         self.assertEqual(item2.quantity, 1)
         self.assertEqual(item2.get_cost(), Decimal('15.50'))
 
-        expected_total = Decimal('65.50')
-        self.assertEqual(order.get_total_cost(), expected_total)
+        # Subtotal: 65.50 (< 500), shipping: 50.00, total: 115.50
+        self.assertEqual(order.get_subtotal(), Decimal('65.50'))
+        self.assertEqual(order.shipping_cost, Decimal('50.00'))
+        self.assertEqual(order.get_total_cost(), Decimal('115.50'))
 
     def test_checkout_prefills_authenticated_user_information(self):
         self.client.login(username='shopper', password='TestPassword123!')
