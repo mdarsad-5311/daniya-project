@@ -303,7 +303,7 @@ class WishlistEmptyStateTests(WishlistSetupMixin, TestCase):
 # 7. Regression Tests
 # ---------------------------------------------------------------------------
 
-class Phase5RegressionTests(WishlistSetupMixin, TestCase):
+class StorefrontFlowRegressionTests(WishlistSetupMixin, TestCase):
 
     def test_cart_still_works(self):
         """Cart page loads."""

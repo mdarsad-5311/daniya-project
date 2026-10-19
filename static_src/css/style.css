@@ -101,7 +101,7 @@
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04);
   --shadow-lift: 0 20px 40px -10px rgba(72, 101, 81, 0.18);
 
-  --gradient-lovable: linear-gradient(135deg, #F9F0E3 0%, #F9F0E3 100%);
+  --gradient-warm: linear-gradient(135deg, #F9F0E3 0%, #F9F0E3 100%);
   --gradient-primary: #486551;
   --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -207,8 +207,8 @@
   box-shadow: var(--shadow-lift);
 }
 
-@utility bg-gradient-lovable {
-  background-image: var(--gradient-lovable);
+@utility bg-gradient-warm {
+  background-image: var(--gradient-warm);
 }
 
 @utility bg-gradient-primary {

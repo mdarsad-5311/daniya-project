@@ -306,7 +306,7 @@ class AccountsAdminTests(BaseTestCase):
         self.assertFalse(NewsletterSubscriber.objects.filter(id=self.subscriber.id).exists())
 
 
-class Phase3RegressionTests(BaseTestCase):
+class StorefrontRegressionTests(BaseTestCase):
     def setUp(self):
         self.client = Client()
         self.category = Category.objects.create(name='Face', slug='face')
